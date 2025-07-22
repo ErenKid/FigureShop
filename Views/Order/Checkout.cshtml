@@ -1,0 +1,129 @@
+@model FigureShop.ViewModels.CheckoutViewModel
+
+<div class="container py-5">
+    <h2 class="text-center mb-4"><i class="fas fa-credit-card"></i> Thanh toán</h2>
+
+    <form asp-action="Checkout" method="post" class="row g-4">
+        <!-- CỘT TRÁI: THÔNG TIN KHÁCH HÀNG -->
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label asp-for="FullName" class="form-label">Họ tên</label>
+                <input asp-for="FullName" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Address" class="form-label">Địa chỉ nhận hàng</label>
+                <input asp-for="Address" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                <input asp-for="Phone" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Note" class="form-label">Ghi chú</label>
+                <textarea asp-for="Note" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
+                <select asp-for="PaymentMethod" class="form-select" id="paymentMethod">
+                    <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                    <option value="Bank">Chuyển khoản ngân hàng</option>
+                </select>
+            </div>
+
+            <!-- THÔNG TIN CHUYỂN KHOẢN + QR -->
+           <div id="bankTransferInfo" class="alert alert-info d-none shadow-sm">
+    <div class="row align-items-center">
+        <!-- THÔNG TIN -->
+        <div class="col-md-8">
+            <h6 class="mb-2 text-primary">
+                <i class="fas fa-university me-1"></i> Thông tin chuyển khoản
+            </h6>
+            <ul class="list-unstyled small mb-2">
+                <li>🏦 Ngân hàng: <strong>VietinBank</strong></li>
+                <li>💳 Số tài khoản: <strong>107874868604</strong></li>
+                <li>👤 Chủ tài khoản: <strong>HOANG NGOC NAM KIET</strong></li>
+                <li>📝 Nội dung chuyển khoản: <code class="fw-bold text-dark">Họ và Tên</code></li>
+            </ul>
+            <div class="small mt-2">
+                📸 Sau khi chuyển, vui lòng <strong>chụp ảnh</strong> và gửi qua Zalo:
+                <a href="https://zalo.me/0961855997" target="_blank" class="fw-bold text-primary text-decoration-none">
+                    0961855997
+                </a>
+            </div>
+        </div>
+
+        <!-- QR CODE -->
+        <div class="col-md-4 text-center">
+            <img src="~/images/banking.jpg" alt="QR chuyển khoản"
+                 class="img-thumbnail rounded shadow-sm" style="max-width: 130px;" />
+            <div class="small text-muted mt-1">📲 Quét mã QR</div>
+        </div>
+    </div>
+</div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                <i class="fas fa-paper-plane"></i> Đặt hàng
+            </button>
+        </div>
+
+        <!-- CỘT PHẢI: GIỎ HÀNG -->
+        <div class="col-md-6">
+            <h5 class="mb-3"><i class="fas fa-box"></i> Giỏ hàng của bạn</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-end" style="min-width: 120px;">Đơn giá</th>
+                            <th class="text-end" style="min-width: 130px;">Tổng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="@item.Product.ImagePath" alt="@item.Product.Name"
+                                             style="width: 50px; height: 50px; object-fit: contain;" />
+                                        <span class="small">@item.Product.Name</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end">@item.Price.ToString("N0") ₫</td>
+                                <td class="text-end">@((item.Quantity * item.Price).ToString("N0")) ₫</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">Tổng cộng:</th>
+                            <th class="text-end text-danger">@Model.TotalAmount.ToString("N0") ₫</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const methodSelect = document.getElementById("paymentMethod");
+        const bankInfo = document.getElementById("bankTransferInfo");
+
+        function toggleBankInfo() {
+            if (methodSelect.value === "Bank") {
+                bankInfo.classList.remove("d-none");
+            } else {
+                bankInfo.classList.add("d-none");
+            }
+        }
+
+        methodSelect.addEventListener("change", toggleBankInfo);
+        toggleBankInfo(); // Gọi lần đầu khi trang tải
+    });
+</script>
+}

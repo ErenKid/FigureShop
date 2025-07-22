@@ -1,0 +1,30 @@
+@model FigureShop.Models.Order
+
+<h2>Chi tiết đơn hàng</h2>
+<p><strong>Mã đơn hàng:</strong> @Model.Id</p>
+<p><strong>Người đặt:</strong> @Model.UserId</p>
+<p><strong>Ngày đặt:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+<p><strong>Tổng tiền:</strong> @Model.TotalAmount.ToString("N0") VND</p>
+<p><strong>Trạng thái:</strong> @Model.Status</p>
+<h3>Danh sách sản phẩm:</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderItems)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Price.ToString("N0")</td>
+                <td>@(item.Quantity * item.Price).ToString("N0")</td>
+            </tr>
+        }
+    </tbody>
+</table> 

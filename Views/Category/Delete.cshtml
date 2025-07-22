@@ -1,0 +1,13 @@
+@model FigureShop.Models.Category
+
+<h2>Xoá danh mục</h2>
+
+<h3>Bạn có chắc chắn muốn xoá danh mục này?</h3>
+<div>
+    <b>Tên danh mục:</b> @Model.Name
+</div>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Xoá</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+</form> 

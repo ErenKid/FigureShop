@@ -1,0 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+
+public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<FigureShopContext>
+{
+    public FigureShopContext CreateDbContext(string[] args)
+    {
+        var optionsBuilder = new DbContextOptionsBuilder<FigureShopContext>();
+        optionsBuilder.UseMySQL("Server=localhost;Database=figureshopdb;User=root;Password=3122004;");
+
+        return new FigureShopContext(optionsBuilder.Options);
+    }
+}

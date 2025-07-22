@@ -1,0 +1,12 @@
+@model FigureShop.Models.ApplicationUser
+
+<h2>Delete User</h2>
+
+<h3>Are you sure you want to delete this user?</h3>
+<div>
+    <b>UserName:</b> @Model.UserName
+</div>
+<form asp-action="Delete" method="post">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+</form>

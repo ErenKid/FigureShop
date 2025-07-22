@@ -1,0 +1,85 @@
+/* _content/FigureShop/Views/Shared/_Layout.cshtml.rz.scp.css */
+/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand[b-netd0yhjii] {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+a[b-netd0yhjii] {
+  color: #0077cc;
+}
+
+.btn-primary[b-netd0yhjii] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active[b-netd0yhjii], .nav-pills .show > .nav-link[b-netd0yhjii] {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top[b-netd0yhjii] {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom[b-netd0yhjii] {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow[b-netd0yhjii] {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy[b-netd0yhjii] {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+.footer[b-netd0yhjii] {
+  background-color: #2c2c2c;
+  padding: 10px 0 6px;     /* ↓ giảm padding để đỡ chiếm chiều cao */
+  font-size: 12px;
+  line-height: 1.4;         /* ↓ khoảng cách dòng */
+  color: #fff;
+}
+
+html[b-netd0yhjii], body[b-netd0yhjii] {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body[b-netd0yhjii] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main[b-netd0yhjii] {
+  flex: 1 0 auto;
+  min-height: calc(100vh - 120px);
+}
+
+footer.footer[b-netd0yhjii] {
+  flex-shrink: 0;
+  background-color: #2c2c2c;
+  padding: 20px 0 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #fff;
+}
+.product-description[b-netd0yhjii] {
+  padding-left: 1.2rem;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.product-description li[b-netd0yhjii]::marker {
+  color: #555;
+}

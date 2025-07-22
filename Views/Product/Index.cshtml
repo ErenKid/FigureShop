@@ -1,0 +1,121 @@
+@model List<FigureShop.Models.Product>
+@{
+    ViewData["Title"] = "All Products - FigureShop";
+}
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<FigureShop.Models.ApplicationUser> SignInManager
+@inject UserManager<FigureShop.Models.ApplicationUser> UserManager
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar Categories -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Categories</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <a href="@Url.Action("Index", "Product")" 
+                           class="list-group-item list-group-item-action @(ViewBag.SelectedCategoryId == null ? "active" : "")">
+                            All Products
+                        </a>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <a href="@Url.Action("Index", "Product", new { categoryId = category.Id })" 
+                               class="list-group-item list-group-item-action @(ViewBag.SelectedCategoryId == category.Id ? "active" : "")">
+                                @category.Name
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Products Grid -->
+        <div class="col-lg-9">
+            <!-- Nút thêm sản phẩm cho admin -->
+            @if (User.IsInRole("Admin")) {
+                <div class="mb-3 text-end">
+                    <a href="@Url.Action("Create", "Product")" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus"></i> Thêm sản phẩm
+                    </a>
+                </div>
+            }
+            <!-- Search and Filter -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <form method="get" class="d-flex">
+                        <input type="text" name="searchString" class="form-control me-2" 
+                               placeholder="Search products..." value="@ViewBag.CurrentFilter">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="text-muted">@Model.Count of @ViewBag.TotalCount products</span>
+                </div>
+            </div>
+            <!-- Products Grid -->
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                @foreach (var product in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="position-relative">
+                                <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" 
+                                     style="height: 250px; object-fit: contain; background: #f8f9fa;">
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-success">Có sẵn</span>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title text-truncate">@product.Name</h6>
+                                <p class="card-text text-muted small">@product.Category?.Name</p>
+                               @if (product.DiscountPrice.HasValue && product.DiscountPrice.Value > 0 && product.DiscountPrice.Value < product.Price)
+{
+                                <p class="mb-1">
+                                <span class="text-muted text-decoration-line-through">@product.Price.ToString("N0") ₫</span>
+                                </p>
+                                <p class="text-danger fw-bold fs-5 mb-3">
+                                 @product.DiscountPrice.Value.ToString("N0") ₫
+                                 </p>
+}
+                        else
+{
+                                 <p class="text-danger fw-bold fs-5 mb-3">
+                                 @product.Price.ToString("N0") ₫
+                                </p>
+}
+
+
+                                <div class="mt-auto">
+                                    <div class="d-grid gap-2">
+                                        <a href="@Url.Action("Details", "Product", new { id = product.Id })" 
+                                           class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- Pagination -->
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "Product", new { pageNumber = i, categoryId = ViewBag.SelectedCategoryId, searchString = ViewBag.CurrentFilter })">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            window.location.href = '/ShoppingCart/AddToCart?productId=' + productId;
+        });
+    });
+</script> 

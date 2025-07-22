@@ -1,0 +1,14 @@
+@model FigureShop.Models.ApplicationUser
+
+<h2>Chi tiết User</h2>
+<div class="card" style="width: 24rem;">
+    <div class="card-body">
+        <h5 class="card-title">@Model.UserName</h5>
+        <p class="card-text"><b>Email:</b> @Model.Email</p>
+        <p class="card-text"><b>Họ tên:</b> @Model.FullName</p>
+        <p class="card-text"><b>Địa chỉ:</b> @Model.Address</p>
+        <p class="card-text"><b>Số điện thoại:</b> @Model.PhoneNumber</p>
+        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">Sửa</a>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Quay lại danh sách</a>
+    </div>
+</div> 

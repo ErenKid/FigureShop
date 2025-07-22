@@ -1,0 +1,35 @@
+@model IEnumerable<FigureShop.Models.Order>
+@{
+    ViewData["Title"] = "Danh sách đơn hàng";
+}
+<h2>Danh sách đơn hàng</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Người đặt</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.UserId</td>
+                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@order.TotalAmount.ToString("N0") VND</td>
+                <td>@order.Status</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = order.Id })" class="btn btn-info btn-sm">Chi tiết</a>
+                    <a href="@Url.Action("ChangeOrderStatus", new { orderId = order.Id, newStatus = "Shipped" })" class="btn btn-warning btn-sm">Đang giao</a>
+                    <a href="@Url.Action("ChangeOrderStatus", new { orderId = order.Id, newStatus = "Completed" })" class="btn btn-success btn-sm">Hoàn tất</a>
+                    <a href="@Url.Action("ChangeOrderStatus", new { orderId = order.Id, newStatus = "Cancelled" })" class="btn btn-danger btn-sm">Hủy</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 

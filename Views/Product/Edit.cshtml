@@ -1,0 +1,104 @@
+@model FigureShop.Models.Product
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Chỉnh sửa sản phẩm</h2>
+
+    <form asp-action="Edit" method="post" class="needs-validation" novalidate>
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label">Tên sản phẩm</label>
+                <input asp-for="Name" class="form-control" required />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Price" class="form-label">Giá gốc</label>
+                <input asp-for="Price" class="form-control" required />
+                <span asp-validation-for="Price" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6" id="discountField" style="display:none;">
+                <label asp-for="DiscountPrice" class="form-label">Giá khuyến mãi</label>
+                <input asp-for="DiscountPrice" class="form-control" />
+                <span asp-validation-for="DiscountPrice" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="CategoryId" class="form-label">Danh mục</label>
+                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId" required id="CategoryId">
+                    <option value="">-- Chọn danh mục --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Stock" class="form-label">Tồn kho</label>
+                <input asp-for="Stock" class="form-control" required />
+                <span asp-validation-for="Stock" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="Description" class="form-label">Mô tả</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="ImagePath" class="form-label">Ảnh chính</label>
+                <input asp-for="ImagePath" class="form-control" />
+                <span asp-validation-for="ImagePath" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="ImagePath2" class="form-label">Ảnh phụ 2</label>
+                <input asp-for="ImagePath2" class="form-control" />
+                <span asp-validation-for="ImagePath2" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="ImagePath3" class="form-label">Ảnh phụ 3</label>
+                <input asp-for="ImagePath3" class="form-control" />
+                <span asp-validation-for="ImagePath3" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Quay lại
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Lưu thay đổi
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const categorySelect = document.getElementById("CategoryId");
+            const discountField = document.getElementById("discountField");
+
+            function toggleDiscountField() {
+                const selectedText = categorySelect.options[categorySelect.selectedIndex]?.text.toLowerCase();
+                if (selectedText && selectedText.includes("sale")) {
+                    discountField.style.display = "block";
+                } else {
+                    discountField.style.display = "none";
+                }
+            }
+
+            categorySelect.addEventListener("change", toggleDiscountField);
+            toggleDiscountField(); // Khi trang tải xong
+        });
+    </script>
+}

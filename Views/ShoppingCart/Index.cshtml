@@ -1,0 +1,108 @@
+@model FigureShop.Models.ShoppingCart
+
+<div class="container py-5">
+    <h2 class="text-center mb-4"><i class="fas fa-shopping-cart"></i> Giỏ hàng của bạn</h2>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="alert alert-info text-center">🛒 Giỏ hàng của bạn đang trống.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle shadow-sm">
+                <thead class="table-light text-center">
+                    <tr>
+                        <th style="min-width: 280px;">Sản phẩm</th>
+                        <th style="width: 120px;">Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@item.Product?.ImagePath" alt="@item.Product?.Name"
+                                         class="img-thumbnail" style="width: 60px; height: 60px; object-fit: contain;" />
+                                    <div>
+                                        <strong>@item.Product?.Name</strong><br />
+                                        <small class="text-muted">@item.Product?.Category?.Name</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <input type="number" value="@item.Quantity" min="1"
+                                       onchange="updateQuantity(@item.Id, this.value)"
+                                       class="form-control form-control-sm text-center" />
+                            </td>
+                            <td class="text-end">
+                                @if (item.Product != null && item.Price < item.Product.Price)
+                                {
+                                    <div>
+                                        <span class="text-muted text-decoration-line-through">
+                                            @item.Product.Price.ToString("N0") ₫
+                                        </span><br />
+                                        <span class="text-danger fw-bold">@item.Price.ToString("N0") ₫</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold">@item.Price.ToString("N0") ₫</span>
+                                }
+                            </td>
+                            <td class="text-end" id="itemTotal_@item.Id">
+                                @((item.Quantity * item.Price).ToString("N0")) ₫
+                            </td>
+                            <td class="text-center">
+                                <form asp-action="RemoveItem" method="post">
+                                    <input type="hidden" name="itemId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash-alt"></i> Xoá
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4 gap-3">
+            <h4 class="text-danger fw-bold mb-0">
+                Tổng cộng: <span id="totalAmount">@Model.TotalAmount.ToString("N0") ₫</span>
+            </h4>
+            <a href="@Url.Action("Checkout", "Order")" class="btn btn-success btn-lg">
+                <i class="fas fa-credit-card"></i> Thanh toán
+            </a>
+        </div>
+
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-success mt-3">@ViewBag.Message</div>
+        }
+    }
+</div>
+
+@section Scripts {
+<script>
+    function updateQuantity(itemId, quantity) {
+        fetch('/ShoppingCart/UpdateQuantityAjax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ itemId: itemId, quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('totalAmount').innerText = data.totalAmount + " ₫";
+            document.getElementById('itemTotal_' + itemId).innerText = data.itemTotal + " ₫";
+        });
+    }
+</script>
+}
