@@ -143,14 +143,33 @@
             <img src="/images/logo.png" alt="Figure Shop Logo" style="max-width: 100px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
         </div>
         <div class="login-title">Login</div>
+
+        <!-- ✅ THÊM: Hiển thị thông báo sau khi đăng ký -->
+        @if (TempData["RegisterSuccess"] != null)
+        {
+            <div class="alert alert-success text-center shadow-sm" role="alert" style="font-size: 0.95rem;">
+                @TempData["RegisterSuccess"]
+            </div>
+        }
+
+        @if (!ViewData.ModelState.IsValid || ViewData.ModelState[""]?.Errors.Count > 0)
+        {
+            <div class="alert alert-danger text-center shadow-sm" role="alert" style="font-size: 0.95rem;">
+                @foreach (var error in ViewData.ModelState[""]?.Errors)
+                {
+                    @error.ErrorMessage <br />
+                }
+            </div>
+        }
         <form asp-action="Login" method="post">
             <div class="form-group">
                 <div class="input-wrapper" style="position:relative;">
-                    <span asp-validation-for="UserName" class="text-danger"></span>
+                    <span asp-validation-for="UserNameOrEmail" class="text-danger"></span>
                     <span class="input-icon"><i class="fa fa-user"></i></span>
-                    <input asp-for="UserName" class="form-control" placeholder="Username" />
+                    <input asp-for="UserNameOrEmail" class="form-control" placeholder="Tên đăng nhập hoặc Email" />
                 </div>
             </div>
+
             <div class="form-group">
                 <div class="input-wrapper" style="position:relative;">
                     <span asp-validation-for="Password" class="text-danger"></span>
@@ -158,14 +177,17 @@
                     <input asp-for="Password" class="form-control" type="password" placeholder="Password" />
                 </div>
             </div>
+
             <div class="form-group d-flex align-items-center justify-content-between">
                 <div class="form-check mb-0">
                     <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe" />
                     <label asp-for="RememberMe" class="form-check-label" for="rememberMe">Remember Me</label>
                 </div>
-                <a href="#" class="small">Forgot Password?</a>
+                <a asp-action="ForgotPassword" asp-controller="Account" class="small text-white text-decoration-underline">Forgot Password?</a>     
             </div>
+
             <button type="submit" class="btn btn-login">Submit</button>
+
             <div class="login-links">
                 Don't have an account?
                 <a asp-controller="Account" asp-action="Register">Register</a>
@@ -178,8 +200,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        function updateInputValidation(inputName) {
+    document.addEventListener('DOMContentLoaded', function () {
+        function updateInputValidation(inputName, defaultPlaceholder) {
             var input = document.querySelector('input[name="' + inputName + '"]');
             var error = document.querySelector('[data-valmsg-for="' + inputName + '"]');
             if (input && error && error.textContent.trim() !== "") {
@@ -187,21 +209,20 @@
                 input.style.borderColor = '#ff4d4f';
                 input.classList.add('input-error');
             } else if (input) {
-                // Đặt lại placeholder mặc định
-                if(inputName === 'UserName') input.placeholder = 'Username';
-                if(inputName === 'Password') input.placeholder = 'Password';
+                input.placeholder = defaultPlaceholder;
                 input.style.borderColor = '';
                 input.classList.remove('input-error');
             }
         }
-        updateInputValidation('UserName');
-        updateInputValidation('Password');
-        // Lắng nghe khi form submit hoặc input thay đổi
-        document.querySelectorAll('input[name="UserName"], input[name="Password"]').forEach(function(input) {
-            input.addEventListener('input', function() {
-                setTimeout(function() {
-                    updateInputValidation('UserName');
-                    updateInputValidation('Password');
+
+        updateInputValidation('UserNameOrEmail', 'Tên đăng nhập hoặc Email');
+        updateInputValidation('Password', 'Password');
+
+        document.querySelectorAll('input[name="UserNameOrEmail"], input[name="Password"]').forEach(function (input) {
+            input.addEventListener('input', function () {
+                setTimeout(function () {
+                    updateInputValidation('UserNameOrEmail', 'Tên đăng nhập hoặc Email');
+                    updateInputValidation('Password', 'Password');
                 }, 100);
             });
         });

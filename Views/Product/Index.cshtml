@@ -5,24 +5,26 @@
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<FigureShop.Models.ApplicationUser> SignInManager
 @inject UserManager<FigureShop.Models.ApplicationUser> UserManager
+
 <div class="container-fluid py-4">
+    <h2 class="mb-4 fw-bold text-uppercase text-primary text-center" style="margin-top:40px;">Quản lý sản phẩm</h2>
     <div class="row">
         <!-- Sidebar Categories -->
         <div class="col-lg-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Categories</h5>
+            <div class="card border-0 shadow" style="border-radius:18px;">
+                <div class="card-header text-white" style="background: linear-gradient(90deg,#ff512f,#a18cd1); border-radius:18px 18px 0 0;">
+                    <h5 class="mb-0 fw-bold" style="letter-spacing:1px;">Danh mục</h5>
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush">
                         <a href="@Url.Action("Index", "Product")" 
-                           class="list-group-item list-group-item-action @(ViewBag.SelectedCategoryId == null ? "active" : "")">
-                            All Products
+                           class="list-group-item list-group-item-action @(ViewBag.SelectedCategoryId == null ? "active" : "") fw-bold" style="border-radius:8px;">
+                            Tất cả sản phẩm
                         </a>
                         @foreach (var category in ViewBag.Categories)
                         {
-                            <a href="@Url.Action("Index", "Product", new { categoryId = category.Id })" 
-                               class="list-group-item list-group-item-action @(ViewBag.SelectedCategoryId == category.Id ? "active" : "")">
+                            <a href="@Url.Action("Index", "Product", new { categoryId = category.Id })"
+                               class="list-group-item list-group-item-action @(ViewBag.SelectedCategoryId == category.Id ? "active" : "") fw-bold" style="border-radius:8px;">
                                 @category.Name
                             </a>
                         }
@@ -32,90 +34,291 @@
         </div>
         <!-- Products Grid -->
         <div class="col-lg-9">
-            <!-- Nút thêm sản phẩm cho admin -->
-            @if (User.IsInRole("Admin")) {
-                <div class="mb-3 text-end">
-                    <a href="@Url.Action("Create", "Product")" class="btn btn-success btn-lg">
-                        <i class="fas fa-plus"></i> Thêm sản phẩm
-                    </a>
+            <!-- Search, Filter & Add Product (Admin) in one row -->
+            <div class="row mb-4 align-items-center justify-content-center">
+                <div class="col-lg-12 mx-auto">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                        <button type="button" class="btn btn-outline-primary rounded-pill px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#filterModal">
+                            <i class="bi bi-funnel"></i> Bộ lọc
+                        </button>
+                        <span class="text-muted ms-2" style="font-size:1rem;">@Model.Count of @ViewBag.TotalCount products</span>
+                        @if (User.IsInRole("Admin")) {
+                            <a href="@Url.Action("Create", "Product")" class="btn btn-sm rounded-pill px-4" style="background: linear-gradient(90deg,#fbc2eb,#a18cd1); color: #fff; font-weight:600; border:none; box-shadow:0 2px 8px #a18cd144; height:44px; display:flex; align-items:center;">
+                                <i class="fas fa-plus"></i> Thêm sản phẩm
+                            </a>
+                        }
+                    </div>
                 </div>
-            }
-            <!-- Search and Filter -->
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <form method="get" class="d-flex">
-                        <input type="text" name="searchString" class="form-control me-2" 
-                               placeholder="Search products..." value="@ViewBag.CurrentFilter">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </form>
-                </div>
-                <div class="col-md-4 text-end">
-                    <span class="text-muted">@Model.Count of @ViewBag.TotalCount products</span>
-                </div>
+<!-- Modal Bộ lọc nâng cao -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="filterModalLabel">Bộ lọc nâng cao</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="get">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Sắp xếp giá</label>
+            <div class="d-flex gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="sortOrder" id="priceascModal" value="priceasc" @(ViewBag.SortOrder == "priceasc" ? "checked" : "")>
+                <label class="form-check-label" for="priceascModal">Giá thấp đến cao</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="sortOrder" id="pricedescModal" value="pricedesc" @(ViewBag.SortOrder == "pricedesc" ? "checked" : "")>
+                <label class="form-check-label" for="pricedescModal">Giá cao đến thấp</label>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Trạng thái</label>
+            <select name="status" class="form-select rounded-pill">
+              <option value="">Tất cả</option>
+              <option value="available">Có sẵn</option>
+              <option value="outofstock">Hết hàng</option>
+              
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Khuyến mãi</label>
+            <select name="sale" class="form-select rounded-pill">
+              <option value="">Tất cả</option>
+              <option value="sale">Đang giảm giá</option>
+              <option value="flashsale">Flash Sale</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Đóng</button>
+          <button type="submit" class="btn btn-primary rounded-pill">Áp dụng bộ lọc</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
             </div>
             <!-- Products Grid -->
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                @foreach (var product in Model)
-                {
-                    <div class="col">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="position-relative">
-                                <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" 
-                                     style="height: 250px; object-fit: contain; background: #f8f9fa;">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-4 g-4">
+                    @foreach (var product in Model)
+                    {
+                        <div class="col d-flex align-items-stretch">
+                            <div class="card h-100 border-0 shadow product-card position-relative" style="border-radius: 18px; overflow: hidden; background: #fff; transition: box-shadow 0.2s; min-width: 240px; max-width: 270px; margin: 0 auto;">
+                                <img src="@product.ImagePath" class="card-img-top" alt="@product.Name"
+                                     style="height: 200px; object-fit: cover; background: #fbc2eb; border-radius: 16px 16px 0 0;">
                                 <div class="position-absolute top-0 end-0 m-2">
-                                    <span class="badge bg-success">Có sẵn</span>
+                                    @if (product.Stock == 0)
+                                    {
+                                        <span class="badge text-white px-3 py-1" style="font-size:1rem; border-radius:10px; background: linear-gradient(90deg,#bdbdbd,#757575);">Hết hàng</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-white px-3 py-1" style="font-size:1rem; border-radius:10px; background: linear-gradient(90deg,#ff512f,#a18cd1);">Có sẵn</span>
+                                    }
                                 </div>
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h6 class="card-title text-truncate">@product.Name</h6>
-                                <p class="card-text text-muted small">@product.Category?.Name</p>
-                               @if (product.DiscountPrice.HasValue && product.DiscountPrice.Value > 0 && product.DiscountPrice.Value < product.Price)
-{
-                                <p class="mb-1">
-                                <span class="text-muted text-decoration-line-through">@product.Price.ToString("N0") ₫</span>
-                                </p>
-                                <p class="text-danger fw-bold fs-5 mb-3">
-                                 @product.DiscountPrice.Value.ToString("N0") ₫
-                                 </p>
-}
-                        else
-{
-                                 <p class="text-danger fw-bold fs-5 mb-3">
-                                 @product.Price.ToString("N0") ₫
-                                </p>
-}
-
-
-                                <div class="mt-auto">
-                                    <div class="d-grid gap-2">
-                                        <a href="@Url.Action("Details", "Product", new { id = product.Id })" 
-                                           class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                                <div class="card-body d-flex flex-column" style="padding-bottom:0.5rem;">
+                                    <h6 class="card-title fw-bold text-truncate text-center mt-1 mb-2" style="font-size:1.1rem; color:#ff512f;">@product.Name</h6>
+                                    <div class="price-block mb-2 d-flex flex-column align-items-center justify-content-center">
+                                        @if (product.DiscountPrice.HasValue && product.DiscountPrice.Value > 0 && product.DiscountPrice.Value < product.Price)
+                                        {
+                                            <span class="text-muted text-decoration-line-through price-original" style="font-size:1rem;">@product.Price.ToString("N0") ₫</span>
+                                            <span class="fw-bold ms-2" style="font-size:1.2rem; color:#dd2476;">@product.DiscountPrice.Value.ToString("N0") ₫</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="fw-bold ms-2" style="font-size:1.2rem; color:#ff512f;">@product.Price.ToString("N0") ₫</span>
+                                        }
+                                    </div>
+                                    <div class="mt-auto pt-0 w-100">
+                                        <div class="d-flex gap-2">
+                                            <a href="@Url.Action("Details", "Product", new { id = product.Id })"
+                                               class="btn btn-sm rounded-pill px-3 flex-grow-1" style="background: linear-gradient(90deg,#fbc2eb,#a18cd1); color: #fff; border: none; font-weight:600;">Xem chi tiết</a>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                        <i class="bi bi-three-dots-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end">
+                                                        <li><a class="dropdown-item" href="@Url.Action("Edit", "Product", new { id = product.Id })">
+                                                            <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa
+                                                        </a></li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item text-danger" href="#" onclick="confirmDelete(@product.Id, '@product.Name')">
+                                                            <i class="bi bi-trash me-2"></i>Xóa sản phẩm
+                                                        </a></li>
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                }
-            </div>
-            <!-- Pagination -->
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center">
-                    @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("Index", "Product", new { pageNumber = i, categoryId = ViewBag.SelectedCategoryId, searchString = ViewBag.CurrentFilter })">@i</a>
-                        </li>
                     }
-                </ul>
-            </nav>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center align-items-center w-100" style="margin-top:24px; margin-bottom:0;">
+                <nav>
+                    <ul class="pagination" style="border-radius:12px;">
+                        @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                                <a class="page-link" style="border-radius:8px; font-weight:500; min-width:28px; font-size:0.95rem; padding:4px 10px; text-align:center;" href="@Url.Action("Index", "Product", new { pageNumber = i, categoryId = ViewBag.SelectedCategoryId, searchString = ViewBag.CurrentFilter })">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận xóa sản phẩm
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-trash text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <p class="mb-3">Bạn có chắc chắn muốn xóa sản phẩm</p>
+                    <p class="fw-bold text-danger" id="productNameToDelete"></p>
+                    <p class="text-muted small">Hành động này không thể hoàn tác!</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Hủy bỏ
+                </button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">
+                        <i class="bi bi-trash me-2"></i>Xóa ngay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.product-card .card-title { min-height: 2.6em; display: block; }
+.product-card .price-block { min-height: 2.2em; display: flex; align-items: center; justify-content: center; }
+.price-original { color: #bdbdbd !important; }
+.dark-mode .price-original { color: #e0e0e0 !important; }
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-radius: 12px;
+    padding: 8px 0;
+    min-width: 160px;
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 2px 8px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(2px);
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #ffeaea;
+    color: #dc3545 !important;
+}
+
+/* Modal styling */
+.modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    padding: 24px 24px 0;
+}
+
+.modal-body {
+    padding: 20px 24px;
+}
+
+.modal-footer {
+    padding: 0 24px 24px;
+}
+
+/* Button hover effects */
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+/* Admin menu button */
+.dropdown-toggle::after {
+    display: none;
+}
+</style>
 <script>
+    // Xử lý xác nhận xóa sản phẩm
+    function confirmDelete(productId, productName) {
+        document.getElementById('productNameToDelete').textContent = productName;
+        document.getElementById('deleteForm').action = '/Product/Delete/' + productId;
+        var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const productId = this.getAttribute('data-product-id');
             window.location.href = '/ShoppingCart/AddToCart?productId=' + productId;
         });
     });
-</script> 
+</script>
+<script>
+const searchBox = document.getElementById('searchBox');
+const suggestions = document.getElementById('suggestions');
+searchBox.addEventListener('input', async function() {
+    const term = this.value;
+    if (term.length < 2) {
+        suggestions.innerHTML = '';
+        suggestions.style.display = 'none';
+        return;
+    }
+    const res = await fetch(`/Product/Suggest?term=${encodeURIComponent(term)}`);
+    const data = await res.json();
+    if (data.length === 0) {
+        suggestions.innerHTML = '';
+        suggestions.style.display = 'none';
+        return;
+    }
+    suggestions.innerHTML = data.map(name => `<button type='button' class='list-group-item list-group-item-action'>${name}</button>`).join('');
+    suggestions.style.display = 'block';
+    Array.from(suggestions.children).forEach(btn => {
+        btn.onclick = () => {
+            searchBox.value = btn.textContent;
+            suggestions.innerHTML = '';
+            suggestions.style.display = 'none';
+        };
+    });
+});
+document.addEventListener('click', function(e) {
+    if (!searchBox.contains(e.target) && !suggestions.contains(e.target)) {
+        suggestions.innerHTML = '';
+        suggestions.style.display = 'none';
+    }
+});
+</script>

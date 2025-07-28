@@ -34,5 +34,10 @@ function sliderInit() {
             updateSlider();
         });
     });
-    setInterval(nextSlide, 3000);
+    let autoSlide = setInterval(nextSlide, 3000);
+    const slider = document.querySelector('.image-slider');
+    if (slider) {
+        slider.addEventListener('mouseenter', () => clearInterval(autoSlide));
+        slider.addEventListener('mouseleave', () => { autoSlide = setInterval(nextSlide, 3000); });
+    }
 }

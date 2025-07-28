@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FigureShop.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   
     public class CategoryController : Controller
     {
         private readonly FigureShopContext _context;

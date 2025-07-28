@@ -7,5 +7,6 @@ namespace FigureShop.Models
         public string? FullName { get; set; }
         public string? Address { get; set; }
         // Thêm các thuộc tính khác nếu cần
+        public string? AvatarPath { get; set; }// Đường dẫn đến ảnh đại diện của người dùng
     }
 }

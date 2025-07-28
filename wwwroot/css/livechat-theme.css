@@ -1,0 +1,23 @@
+.livechat-container.dark-mode {
+    background: #232323 !important;
+    color: #f1f1f1 !important;
+    width: 100vw !important;
+    min-height: 100vh !important;
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+}
+.livechat-container.dark-mode .livechat-header {
+    background: #181818 !important;
+    color: #ffe !important;
+}
+.livechat-container.dark-mode .livechat-message {
+    background: #222 !important;
+    color: #eee !important;
+}
+.livechat-container.dark-mode input, .livechat-container.dark-mode textarea {
+    background: #333 !important;
+    color: #fff !important;
+    border-color: #444 !important;
+}

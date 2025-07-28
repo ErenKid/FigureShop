@@ -4,6 +4,7 @@ using FigureShop.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using FigureShop.ViewModels;
 
 namespace FigureShop.Controllers
@@ -11,16 +12,22 @@ namespace FigureShop.Controllers
     public class ShoppingCartController : Controller
     {
         private readonly FigureShopContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ShoppingCartController(FigureShopContext context)
+        public ShoppingCartController(FigureShopContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // Thêm sản phẩm vào giỏ
         [HttpPost]
 public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
 {
+    if (!User.Identity.IsAuthenticated)
+    {
+        return RedirectToAction("Login", "Account");
+    }
     var cart = GetOrCreateCart();
     var product = await _context.Products.FindAsync(productId);
     if (product != null)
@@ -165,7 +172,8 @@ public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         // Lấy hoặc tạo giỏ hàng cho user hiện tại
         private ShoppingCart GetOrCreateCart()
         {
-            var userId = User.Identity?.Name ?? "guest";
+            var userId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(userId)) return null;
             var cart = _context.ShoppingCarts
                 .Include(c => c.Items)
                 .ThenInclude(i => i.Product)

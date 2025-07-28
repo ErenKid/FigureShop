@@ -1,3 +1,28 @@
 ﻿@{
+    var notificationList = new List<string>();
+    var notificationIds = new List<int>();
+    var notificationOrderIds = new List<int?>();
+    if (User.Identity.IsAuthenticated)
+    {
+        var db = Context.RequestServices.GetService(typeof(FigureShop.Models.FigureShopContext)) as FigureShop.Models.FigureShopContext;
+        var user = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+        if (user != null)
+        {
+            var notifications = db.Notifications
+                .Where(n => n.UserId == user.Id && !n.IsRead)
+                .OrderByDescending(n => n.CreatedAt)
+                .ToList();
+            notificationList = notifications.Select(n => n.Message).ToList();
+            notificationIds = notifications.Select(n => n.Id).ToList();
+            notificationOrderIds = notifications.Select(n => n.OrderId).ToList();
+        }
+    }
+    if (TempData["Notification"] != null)
+        notificationList.Add(TempData["Notification"].ToString());
+    ViewBag.NotificationList = notificationList;
+    ViewBag.NotificationIds = notificationIds;
+    ViewBag.NotificationOrderIds = notificationOrderIds;
+}
+@{
     Layout = "_Layout";
 }

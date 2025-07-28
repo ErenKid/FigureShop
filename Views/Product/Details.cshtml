@@ -1,102 +1,125 @@
 @model FigureShop.Models.Product
 @{
     ViewData["Title"] = "Chi tiết sản phẩm";
+    var ratingReviews = Model.ProductReviews?.ToList() ?? new List<FigureShop.Models.ProductReview>();
+    var avgRating = ratingReviews.Any() ? Math.Round(ratingReviews.Average(r => r.Rating), 1) : 0;
+    var count = ratingReviews.Count;
+    var userId = User.Identity.IsAuthenticated ? User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value : null;
+    var myReview = User.Identity.IsAuthenticated ? ratingReviews.FirstOrDefault(r => r.UserId == userId) : null;
+    var productComments = Model.ProductComments?.OrderByDescending(c => c.CreatedAt).ToList() ?? new List<FigureShop.Models.ProductComment>();
+    // Nhận giá trị editingCommentId và editingCommentValue từ query string nếu có
+    if (Context.Request.Query.ContainsKey("editingCommentId"))
+    {
+        ViewBag.EditingCommentId = int.Parse(Context.Request.Query["editingCommentId"]);
+    }
+    if (Context.Request.Query.ContainsKey("editingCommentValue"))
+    {
+        ViewBag.EditingCommentValue = Context.Request.Query["editingCommentValue"];
+    }
 }
 
 <div class="container py-5">
-    <!-- KHỐI TRÊN -->
-    <div class="card p-4 shadow mb-4">
-        <div class="row g-4">
+    <div class="card p-4 shadow-lg mb-5 border-0" style="border-radius: 22px; border: 2px solid #fbc2eb; background: #fff;">
+        <div class="row g-4 align-items-center">
             <div class="col-lg-6 text-center">
-                <img id="mainProductImage" src="@Model.ImagePath" alt="@Model.Name"
-                     class="img-fluid rounded shadow-sm mb-3"
-                     style="max-height: 420px; object-fit: contain; background: #f8f9fa;" />
+                <img id="mainProductImage" src="@Model.ImagePath" alt="@Model.Name" class="img-fluid rounded border mb-3" style="width:100%; max-width:420px; height:420px; object-fit:cover; background: #f8f9fa; display:block; margin:auto;">
+
                 <div class="d-flex justify-content-center gap-2">
-                    <img src="@Model.ImagePath" class="img-thumbnail product-thumb"
-                         style="width:70px; height:70px; object-fit:contain; cursor:pointer;"
-                         onclick="changeMainImage(this)" />
-                    @if (!string.IsNullOrEmpty(Model.ImagePath2))
-                    {
-                        <img src="@Model.ImagePath2" class="img-thumbnail product-thumb"
-                             style="width:70px; height:70px; object-fit:contain; cursor:pointer;"
-                             onclick="changeMainImage(this)" />
+                    <img src="@Model.ImagePath" class="img-thumbnail product-thumb" style="width:80px; height:80px; object-fit:cover; cursor:pointer; border:2px solid #a18cd1; transition:border 0.2s;" onclick="changeMainImage(this)" />
+                    @if (!string.IsNullOrEmpty(Model.ImagePath2)) {
+                        <img src="@Model.ImagePath2" class="img-thumbnail product-thumb" style="width:80px; height:80px; object-fit:cover; cursor:pointer; border:2px solid #a18cd1; transition:border 0.2s;" onclick="changeMainImage(this)" />
                     }
-                    @if (!string.IsNullOrEmpty(Model.ImagePath3))
-                    {
-                        <img src="@Model.ImagePath3" class="img-thumbnail product-thumb"
-                             style="width:70px; height:70px; object-fit:contain; cursor:pointer;"
-                             onclick="changeMainImage(this)" />
+                    @if (!string.IsNullOrEmpty(Model.ImagePath3)) {
+                        <img src="@Model.ImagePath3" class="img-thumbnail product-thumb" style="width:80px; height:80px; object-fit:cover; cursor:pointer; border:2px solid #a18cd1; transition:border 0.2s;" onclick="changeMainImage(this)" />
                     }
                 </div>
             </div>
 
             <div class="col-lg-6">
-                <h4 class="fw-bold">@Model.Name</h4>
-                <p>Danh mục: <strong>@Model.Category?.Name</strong></p>
+                <h2 class="fw-bold">@Model.Name</h2>
                 @if (Model.DiscountPrice.HasValue && Model.DiscountPrice.Value > 0 && Model.DiscountPrice.Value < Model.Price)
-{
-                <p class="mb-1">
-             <span class="text-muted text-decoration-line-through">@Model.Price.ToString("N0") ₫</span>
-                </p>
-            <p class="text-danger fs-4 fw-bold">
-             @Model.DiscountPrice.Value.ToString("N0") ₫
-            </p>
-}
-            else
-{
-            <p class="text-danger fs-4 fw-bold">@Model.Price.ToString("N0") ₫</p>
-}
-                <p>Số lượng còn lại: <strong>@Model.Stock</strong></p>
+                {
+                    <div class="mb-2">
+                        <span class="badge text-white px-3 py-1" style="font-size:1rem; border-radius:10px; background: linear-gradient(90deg,#dd2476,#ff512f);">Giảm giá</span>
+                        <span class="text-muted text-decoration-line-through ms-2">@Model.Price.ToString("N0") &#8363;</span>
+                        <span class="fw-bold ms-2" style="font-size:1.5rem; color:#dd2476;">@Model.DiscountPrice.Value.ToString("N0") &#8363;</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-2">
+                        <span class="fw-bold ms-2" style="font-size:1.5rem; color:#ff512f;">@Model.Price.ToString("N0") &#8363;</span>
+                    </div>
+                }
 
-                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-2 mb-3">
-                    <input type="hidden" name="productId" value="@Model.Id" />
-                    <input type="number" name="quantity" value="1" min="1" max="@Model.Stock"
-                           class="form-control" style="width:80px;" />
-                    <button type="submit" class="btn btn-danger px-4">
-                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ hàng
-                    </button>
-                </form>
+                <div class="mb-2">
+                    <span style="font-size:1.3rem; color:#FFD700;">
+                        @string.Concat(Enumerable.Repeat("★", avgRating > 0 ? (int)Math.Round(avgRating) : 0))@string.Concat(Enumerable.Repeat("☆", 5 - (avgRating > 0 ? (int)Math.Round(avgRating) : 0)))
+                        @if (count > 0)
+                        {
+                            <span class="text-muted" style="font-size:1rem;">(@count)</span>
+                        }
+                    </span>
+                </div>
+
+      
+
+                <div class="mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2" style="margin-left:2px;">
+                        <span style="font-size:1.05rem; font-weight:500;">Số lượng còn lại:</span>
+                        <span class="badge bg-light text-dark px-2 py-1" style="font-size:0.95rem; border-radius:8px; border:1px solid #eee; min-width:32px;">@Model.Stock</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2" style="margin-left:2px;">
+                        <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post" class="d-flex align-items-center gap-2" style="margin-bottom:0;">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <input type="number" name="quantity" value="1" min="1" max="@Model.Stock" class="form-control text-center" style="max-width:54px; border-radius:8px; font-size:0.95rem; font-weight:500; height:32px; padding:2px 6px;" />
+                            <button type="submit" class="btn btn-warning fw-bold px-3 py-1" style="border-radius:8px; font-size:0.95rem; font-weight:600; height:32px;">Thêm vào giỏ</button>
+                        </form>
+                    </div>
+                </div>
 
                 <div class="d-flex gap-2">
-                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Quay lại</a>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a href="@Url.Action("Edit", "Product", new { id = Model.Id })" class="btn btn-warning">Sửa</a>
-                        <a href="@Url.Action("Delete", "Product", new { id = Model.Id })"
-                           class="btn btn-danger"
-                           onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">Xóa</a>
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-arrow-left"></i> Quay lại
+                    </a>
+                    @if (User.IsInRole("Admin")) {
+                        <a href="@Url.Action("Edit", "Product", new { id = Model.Id })" class="btn rounded-pill px-3" style="background: linear-gradient(90deg,#fbc2eb,#a18cd1); color: #fff; font-weight:600;">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <button class="btn rounded-pill px-3" style="background: linear-gradient(90deg,#ff512f,#dd2476); color: #fff; font-weight:600;" onclick="confirmDelete(@Model.Id, '@Html.Raw(Html.Encode(Model.Name))')">
+                            <i class="bi bi-trash"></i> Xóa
+                        </button>
                     }
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- KHỐI DƯỚI RIÊNG BIỆT -->
+    <!-- Thông tin mô tả và bảo hành -->
     <div class="row g-4">
         <div class="col-md-6">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm border-0">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">📝 Mô tả sản phẩm</h5>
                 </div>
                 <div class="card-body">
-                    @if (!string.IsNullOrEmpty(Model.Description))
-{
-    <ul class="product-description">
-        @foreach (var line in Model.Description.Split(Environment.NewLine))
-        {
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-                <li>@line.Trim()</li>
-            }
-        }
-    </ul>
-}
+                    @if (!string.IsNullOrWhiteSpace(Model.Description)) {
+                        <ul class="ps-3">
+                            @foreach (var line in Model.Description.Split(Environment.NewLine)) {
+                                if (!string.IsNullOrWhiteSpace(line)) {
+                                    <li>@line.Trim()</li>
+                                }
+                            }
+                        </ul>
+                    } else {
+                        <p class="text-muted">Không có mô tả.</p>
+                    }
                 </div>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow-sm">
+            <div class="card shadow-sm border-0">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">🛡️ Chính sách bảo hành</h5>
                 </div>
@@ -111,20 +134,260 @@
             </div>
         </div>
     </div>
+
+    
+
+  <!-- Đánh giá và bình luận -->
+<div class="card mt-5 mb-4 shadow-sm border-0" style="border-radius: 18px;">
+    <div class="card-header bg-light text-center">
+        <h5 class="mb-0">Đánh giá & bình luận</h5>
+    </div>
+    <div class="card-body">
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="text-center">
+                @if (myReview == null)
+                {
+                    <form asp-controller="ProductReview" asp-action="Add" method="post" id="reviewFormAdd" class="mb-4 d-inline-block">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="rating" id="reviewRatingAdd" value="0" />
+                        <div id="reviewStarsAdd" class="d-flex justify-content-center gap-1 mb-3" style="cursor:pointer;">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="star" data-value="@i" style="font-size:2rem; color:#ccc;">&#9733;</span>
+                            }
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <form asp-controller="ProductReview" asp-action="EditRating" method="post" id="reviewFormEdit" class="mb-4 d-inline-block">
+                        <input type="hidden" name="id" value="@myReview.Id" />
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <input type="hidden" name="rating" id="reviewRatingEdit" value="@myReview.Rating" />
+                        <div id="reviewStarsEdit" class="d-flex justify-content-center gap-1 mb-3" style="cursor:pointer;">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                var color = i <= myReview.Rating ? "#FFD700" : "#ccc";
+                                <span class="star" data-value="@i" style="font-size:2rem; color:@color;">&#9733;</span>
+                            }
+                        </div>
+                    </form>
+                }
+            </div>
+
+            @if (ViewBag.EditingCommentId != null)
+            {
+                <!-- Form sửa bình luận xuất hiện ở trên -->
+                <form asp-controller="ProductComment" asp-action="Edit" method="post" class="mb-4">
+                    <input type="hidden" name="id" value="@ViewBag.EditingCommentId" />
+                    <label class="form-label">Sửa bình luận:</label>
+                    <textarea name="content" class="form-control" rows="2" required>@ViewBag.EditingCommentValue</textarea>
+                    <div class="d-flex gap-2 mt-2">
+                        <button type="submit" class="btn btn-success">Lưu</button>
+                        <a href="@Url.Action("Details", "Product", new { id = Model.Id })" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="ProductComment" asp-action="Add" method="post" class="mb-4">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <label class="form-label">Bình luận:</label>
+                    <textarea name="content" class="form-control" rows="2" required></textarea>
+                    <button type="submit" class="btn btn-secondary w-100 mt-2">Gửi bình luận</button>
+                </form>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info text-center">Vui lòng đăng nhập để đánh giá và bình luận.</div>
+        }
+
+        <!-- Hiển thị danh sách bình luận -->
+        <hr />
+        <div class="mt-4" id="recentComments">
+            <h5 class="fw-bold mb-3"><i class="bi bi-chat-dots me-2"></i>Bình luận gần đây</h5>
+            @if (productComments.Any())
+            {
+                <div class="row g-3">
+                    @foreach (var comment in productComments)
+                    {
+                        var isEditing = ViewBag.EditingCommentId != null && (int)ViewBag.EditingCommentId == comment.Id;
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm mb-2" style="border-radius:14px;">
+                                <div class="card-body p-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <!-- Avatar removed, only show user name -->
+                                        <div class="flex-grow-1">
+                                            <span class="fw-semibold" style="font-size:1.08rem;">@(comment.User != null ? (!string.IsNullOrWhiteSpace(comment.User.FullName) ? comment.User.FullName : comment.User.UserName) : "Người dùng")</span>
+                                            <span class="text-muted ms-2" style="font-size:0.95rem;">@comment.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                                        </div>
+                                        @if (User.Identity.IsAuthenticated && comment.UserId == userId)
+                                        {
+                                            <div class="ms-2">
+                                                @if (isEditing)
+                                                {
+                                                    <!-- Đang sửa: Ẩn nút Sửa, chỉ hiện nút Xóa -->
+                                                    <a href="@Url.Action("Delete", "ProductComment", new { id = comment.Id })" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn chắc chắn muốn xoá bình luận này?')">Xóa</a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("Edit", "ProductComment", new { id = comment.Id })" class="btn btn-sm btn-outline-primary me-1">Sửa</a>
+                                                    <a href="@Url.Action("Delete", "ProductComment", new { id = comment.Id })" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn chắc chắn muốn xoá bình luận này?')">Xóa</a>
+                                                }
+                                            </div>
+                                        }
+                                        else if (User.IsInRole("Admin"))
+                                        {
+                                            <div class="ms-2">
+                                                <a href="@Url.Action("Delete", "ProductComment", new { id = comment.Id })" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn chắc chắn muốn xoá bình luận này?')">Xóa</a>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="ps-1" style="font-size:1.08rem;">
+                                        @comment.Content
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-muted text-center py-3"><i class="bi bi-chat-left-text me-2"></i>Chưa có bình luận nào.</div>
+            }
+        </div>
+    </div>
 </div>
 
-
-
+<!-- Up Sale: Sản phẩm đang giảm giá khác -->
+    <div class="card shadow-sm border-0 mt-5">
+        <div class="card-header bg-light">
+            <h5 class="mb-0" style="color:#dd2476;">🔥 Sản phẩm đang Sale</h5>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                @foreach (var saleProduct in ViewBag.UpSaleProducts as List<FigureShop.Models.Product> ?? new List<FigureShop.Models.Product>())
+                {
+                    if (saleProduct.Id == Model.Id) { continue; } // Không hiển thị sản phẩm hiện tại
+                    <div class="col d-flex align-items-stretch">
+                        <div class="card h-100 border-0 shadow-sm position-relative" style="border-radius: 14px; overflow: hidden; background: #fff;">
+                            <img src="@saleProduct.ImagePath" class="card-img-top" alt="@saleProduct.Name" style="height: 120px; object-fit: cover; border-radius: 14px 14px 0 0;">
+                            <div class="card-body d-flex flex-column" style="padding-bottom:0.5rem;">
+                                <h6 class="card-title fw-bold text-truncate" style="font-size:1rem; color:#dd2476;">@saleProduct.Name</h6>
+                                <div class="mb-2">
+                                    <span class="text-muted text-decoration-line-through">@saleProduct.Price.ToString("N0") ₫</span>
+                                    <span class="fw-bold ms-2" style="font-size:1.1rem; color:#dd2476;">@saleProduct.DiscountPrice?.ToString("N0") ₫</span>
+                                </div>
+                                <div class="mt-auto">
+                                    <a href="@Url.Action("Details", "Product", new { id = saleProduct.Id })" class="btn btn-sm rounded-pill px-3" style="background: linear-gradient(90deg,#fbc2eb,#a18cd1); color: #fff; border: none; font-weight:600;">Xem chi tiết</a>
+                                </div>
+                            </div>
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge text-white px-2 py-1" style="font-size:0.95rem; border-radius:8px; background: linear-gradient(90deg,#dd2476,#ff512f);">Sale</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 @section Scripts {
-<script>
-    function changeMainImage(thumb) {
-        const main = document.getElementById('mainProductImage');
-        main.src = thumb.src;
-        main.style.maxHeight = '420px';
-        main.style.objectFit = 'contain';
-        main.style.width = '100%';
-        main.style.background = '#f8f9fa';
-    }
-</script>
+    <script>
+        function changeMainImage(thumb) {
+            const main = document.getElementById('mainProductImage');
+            main.src = thumb.src;
+            document.querySelectorAll('.product-thumb').forEach(t => t.style.border = '2px solid #a18cd1');
+            thumb.style.border = '2px solid #ff512f';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const thumbs = document.querySelectorAll('.product-thumb');
+            if (thumbs.length > 0) thumbs[0].style.border = '2px solid #ff512f';
+
+            const starsAdd = document.querySelectorAll('#reviewStarsAdd .star');
+            const starsEdit = document.querySelectorAll('#reviewStarsEdit .star');
+            const ratingAddInput = document.getElementById('reviewRatingAdd');
+            const ratingEditInput = document.getElementById('reviewRatingEdit');
+
+            function registerStarEvents(stars, input, formId) {
+                const form = document.getElementById(formId);
+                stars.forEach((star, idx) => {
+                    star.addEventListener('mouseenter', () => highlightStars(stars, idx + 1));
+                    star.addEventListener('mouseleave', () => highlightStars(stars, input.value));
+                    star.addEventListener('click', () => {
+                        input.value = idx + 1;
+                        highlightStars(stars, input.value);
+                        form.submit();
+                    });
+                });
+                highlightStars(stars, input.value);
+            }
+
+            function highlightStars(stars, rating) {
+                stars.forEach((star, i) => {
+                    star.style.color = i < rating ? '#FFD700' : '#ccc';
+                });
+            }
+
+            if (starsAdd.length > 0) registerStarEvents(starsAdd, ratingAddInput, 'reviewFormAdd');
+            if (starsEdit.length > 0) registerStarEvents(starsEdit, ratingEditInput, 'reviewFormEdit');
+
+            // Tự động cuộn về phần bình luận khi nhấn Sửa
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('editingCommentId')) {
+                const commentsSection = document.getElementById('recentComments');
+                if (commentsSection) {
+                    commentsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    </script>
 }
 
+<!-- Modal xác nhận xóa sản phẩm -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+            <div class="modal-header border-0" style="padding: 24px 24px 0;">
+                <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Xác nhận xóa sản phẩm
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px 24px;">
+                <div class="text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-trash text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <p class="mb-3">Bạn có chắc chắn muốn xóa sản phẩm</p>
+                    <p class="fw-bold text-danger" id="productNameToDelete"></p>
+                    <p class="text-muted small">Hành động này không thể hoàn tác!</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center" style="padding: 0 24px 24px;">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Hủy bỏ
+                </button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">
+                        <i class="bi bi-trash me-2"></i>Xóa ngay
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Xử lý modal xác nhận xóa sản phẩm
+    function confirmDelete(productId, productName) {
+        document.getElementById('productNameToDelete').textContent = productName;
+        document.getElementById('deleteForm').action = '/Product/Delete/' + productId;
+        var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        deleteModal.show();
+    }
+</script>

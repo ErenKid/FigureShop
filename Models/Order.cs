@@ -13,5 +13,8 @@ namespace FigureShop.Models
         public string PaymentMethod { get; set; } = null!;
         public ApplicationUser User { get; set; } = null!;
         public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public string Address { get; set; } = null!;
+        public string? VoucherCode { get; set; } // Mã giảm giá áp dụng
+        public decimal VoucherDiscount { get; set; } // Số tiền giảm từ voucher
     }
 }

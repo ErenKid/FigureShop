@@ -1,17 +1,41 @@
+
 @model FigureShop.Models.Category
 
-<h2>Chỉnh sửa danh mục</h2>
+@{
+    ViewData["Title"] = "Chỉnh sửa danh mục";
+}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-4 text-warning fw-bold" style="margin-top:32px;">
+                        <i class="bi bi-pencil-square me-2"></i> Chỉnh sửa danh mục
+                    </h3>
+                    <form asp-action="Edit" method="post" autocomplete="off">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold"><i class="bi bi-tag me-1"></i> Tên danh mục</label>
+                            <input asp-for="Name" class="form-control rounded-pill" placeholder="Nhập tên danh mục" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold"><i class="bi bi-card-text me-1"></i> Mô tả</label>
+                            <textarea asp-for="Description" class="form-control rounded-4" rows="3" placeholder="Nhập mô tả"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold py-2">
+                            <i class="bi bi-pencil-square"></i> Lưu thay đổi
+                        </button>
+                        <a href="@Url.Action("Index")" class="btn btn-secondary w-100 mt-2 rounded-pill">Quay lại danh sách</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-    <a href="@Url.Action("Index")" class="btn btn-secondary">Quay lại</a>
-</form> 
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

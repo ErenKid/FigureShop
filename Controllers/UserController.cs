@@ -8,7 +8,7 @@ using FigureShop.ViewModels;
 
 namespace FigureShop.Controllers
 {
-    [Authorize(Roles = "Admin")]
+ 
     public class UserController : Controller
     {
         private readonly FigureShopContext _context;
@@ -21,15 +21,27 @@ namespace FigureShop.Controllers
         }
 
         // GET: User
-        public async Task<IActionResult> Index(int? pageNumber, string searchString)
+        public async Task<IActionResult> Index(int? pageNumber, string searchString, string sortOrder)
         {
             int pageSize = 10;
-            var users = from u in _context.Users
-                        select u;
+            var users = from u in _context.Users select u;
 
             if (!string.IsNullOrEmpty(searchString))
             {
                 users = users.Where(s => s.UserName.Contains(searchString) || s.Email.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "az":
+                    users = users.OrderBy(u => u.UserName);
+                    break;
+                case "za":
+                    users = users.OrderByDescending(u => u.UserName);
+                    break;
+                default:
+                    users = users.OrderBy(u => u.UserName);
+                    break;
             }
 
             int page = pageNumber ?? 1;
@@ -41,24 +53,20 @@ namespace FigureShop.Controllers
             ViewBag.CurrentPage = page;
             ViewBag.SearchString = searchString;
             ViewBag.TotalPages = (int)Math.Ceiling((double)users.Count() / pageSize);
+            ViewBag.SortOrder = sortOrder;
 
             return View(paginatedUsers);
         }
 
         // GET: User/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
-            {
+            if (string.IsNullOrEmpty(id))
                 return NotFound();
-            }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id.ToString());
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return View(user);
         }
@@ -87,6 +95,9 @@ namespace FigureShop.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    // Tự động xác nhận email nếu tạo từ admin
+                    var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    await _userManager.ConfirmEmailAsync(user, emailToken);
                     return RedirectToAction(nameof(Index));
                 }
                 foreach (var error in result.Errors)
@@ -97,75 +108,118 @@ namespace FigureShop.Controllers
             return View(model);
         }
 
-        // GET: User/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: User/ChangePassword/5
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (string.IsNullOrEmpty(id)) return NotFound();
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+            ViewBag.UserId = id;
+            return View(new ChangePasswordViewModel());
+        }
 
-            var user = await _context.Users.FindAsync(id);
+        // POST: User/ChangePassword/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string userId, ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.UserId = userId;
+                return View(model);
+            }
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return NotFound();
+                ViewBag.Error = "Người dùng không tồn tại.";
+                ViewBag.UserId = userId;
+                return View(model);
             }
+            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                ViewBag.Message = "Đổi mật khẩu thành công!";
+                ViewBag.UserId = userId;
+                return View(new ChangePasswordViewModel());
+            }
+            else
+            {
+                ViewBag.Error = string.Join("<br>", result.Errors.Select(e => e.Description));
+                ViewBag.UserId = userId;
+                return View(model);
+            }
+        }
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return NotFound();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
             return View(user);
         }
 
         // POST: User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Username,Email,PasswordHash,FullName,Address,Phone,Role,CreatedAt,UpdatedAt")] User user)
+        public async Task<IActionResult> Edit(string id, ApplicationUser model)
         {
-            if (id != user.Id)
+            if (id != model.Id) return NotFound();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            // Cập nhật thông tin
+            user.FullName = model.FullName;
+            user.Address = model.Address;
+            user.PhoneNumber = model.PhoneNumber;
+
+            // Xử lý ảnh nếu có upload
+            var file = Request.Form.Files["Avatar"];
+            if (file != null && file.Length > 0)
             {
-                return NotFound();
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/avatars");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                user.AvatarPath = "/uploads/avatars/" + fileName;
             }
 
-            if (ModelState.IsValid)
-            {
-                // Giữ mật khẩu cũ nếu không nhập mới
-                if (string.IsNullOrEmpty(user.PasswordHash))
-                {
-                    var oldUser = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id.ToString());
-                    user.PasswordHash = oldUser?.PasswordHash;
-                }
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
+            await _userManager.UpdateAsync(user);
+            // Lưu thông báo vào DB
+            var notification = new Notification {
+                UserId = user.Id,
+                Message = "Cập nhật thông tin thành công!",
+                CreatedAt = DateTime.Now,
+                IsRead = false,
+                OrderId = null
+            };
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+            // Quay lại trang chi tiết
+            return RedirectToAction("Details", new { id = user.Id });
         }
 
         // GET: User/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string id)
         {
-            if (id == null)
-            {
+            if (string.IsNullOrEmpty(id))
                 return NotFound();
-            }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id.ToString());
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return View(user);
         }
@@ -173,13 +227,12 @@ namespace FigureShop.Controllers
         // POST: User/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                await _userManager.DeleteAsync(user);
             }
             return RedirectToAction(nameof(Index));
         }

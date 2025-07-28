@@ -4,30 +4,60 @@
     <h2 class="text-center mb-4"><i class="fas fa-credit-card"></i> Thanh toán</h2>
 
     <form asp-action="Checkout" method="post" class="row g-4">
+        <input type="hidden" name="selectedItemIds" value="@Context.Request.Query["selectedItemIds"]" />
         <!-- CỘT TRÁI: THÔNG TIN KHÁCH HÀNG -->
         <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label asp-for="FullName" class="form-label">Họ tên</label>
-                <input asp-for="FullName" class="form-control" required />
+            <div class="card shadow-sm mb-4" style="border-radius: 18px;">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="FullName" class="form-label">Họ tên</label>
+                            <input asp-for="FullName" class="form-control" required style="border-radius: 12px;" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label">Địa chỉ nhận hàng</label>
+                            <input asp-for="Address" class="form-control" required style="border-radius: 12px;" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                            <input asp-for="Phone" class="form-control" required style="border-radius: 12px;" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Note" class="form-label">Ghi chú</label>
+                            <textarea asp-for="Note" class="form-control" rows="3" style="border-radius: 12px;"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
+                            <select asp-for="PaymentMethod" class="form-select" id="paymentMethod" style="border-radius: 12px;">
+                                <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+                                <option value="Bank">Chuyển khoản ngân hàng</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="Address" class="form-label">Địa chỉ nhận hàng</label>
-                <input asp-for="Address" class="form-control" required />
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Phone" class="form-label">Số điện thoại</label>
-                <input asp-for="Phone" class="form-control" required />
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Note" class="form-label">Ghi chú</label>
-                <textarea asp-for="Note" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="form-group mb-4">
-                <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
-                <select asp-for="PaymentMethod" class="form-select" id="paymentMethod">
-                    <option value="COD">Thanh toán khi nhận hàng (COD)</option>
-                    <option value="Bank">Chuyển khoản ngân hàng</option>
-                </select>
+            <div class="card shadow-sm mb-4" style="border-radius: 18px;">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fa fa-ticket-alt fa-lg text-warning me-2"></i>
+                        <span class="fw-bold" style="font-size: 1.1em;">Mã giảm giá / Voucher</span>
+                    </div>
+                    <div class="row g-2 align-items-center">
+                        <div class="col-8">
+                            <select class="form-select" id="voucherSelect" name="VoucherCode" style="border-radius: 12px;">
+                                <option value="">-- Chọn mã giảm giá --</option>
+                                <option value="NEW50">Giảm 50,000₫ cho người mới</option>
+                                <option value="FREESHIP">Miễn phí vận chuyển</option>
+                            </select>
+                        </div>
+                        <div class="col-4 text-end">
+                            <button type="button" class="btn btn-warning w-100 fw-bold" style="border-radius: 12px;" onclick="applyVoucher()">
+                                <i class="fa fa-gift me-1"></i> Áp dụng mã
+                            </button>
+                        </div>
+                    </div>
+                    <div id="voucherMessage" class="mt-2 text-success small"></div>
+                </div>
             </div>
 
             <!-- THÔNG TIN CHUYỂN KHOẢN + QR -->
@@ -70,11 +100,11 @@
         <div class="col-md-6">
             <h5 class="mb-3"><i class="fas fa-box"></i> Giỏ hàng của bạn</h5>
             <div class="table-responsive">
-                <table class="table table-bordered align-middle">
+                <table class="table table-bordered align-middle shadow-sm" style="border-radius: 18px; overflow: hidden;">
                     <thead class="table-light">
                         <tr>
-                            <th>Sản phẩm</th>
-                            <th class="text-center">SL</th>
+                            <th class="text-center" style="font-size: 1.1em;">Sản phẩm</th>
+                            <th class="text-center" style="width: 60px;">SL</th>
                             <th class="text-end" style="min-width: 120px;">Đơn giá</th>
                             <th class="text-end" style="min-width: 130px;">Tổng</th>
                         </tr>
@@ -85,21 +115,21 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <img src="@item.Product.ImagePath" alt="@item.Product.Name"
-                                             style="width: 50px; height: 50px; object-fit: contain;" />
-                                        <span class="small">@item.Product.Name</span>
+                                        <img src="@(string.IsNullOrEmpty(item.Product.ImagePath) ? "/images/no-image.png" : item.Product.ImagePath)" alt="@item.Product.Name"
+                                             style="width: 48px; height: 48px; object-fit: contain; background: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 8px #eee;" onerror="this.src='/images/no-image.png'" />
+                                        <span class="small fw-semibold">@item.Product.Name</span>
                                     </div>
                                 </td>
-                                <td class="text-center">@item.Quantity</td>
-                                <td class="text-end">@item.Price.ToString("N0") ₫</td>
-                                <td class="text-end">@((item.Quantity * item.Price).ToString("N0")) ₫</td>
+                                <td class="text-center align-middle">@item.Quantity</td>
+                                <td class="text-end align-middle">@item.Price.ToString("N0") ₫</td>
+                                <td class="text-end align-middle">@((item.Quantity * item.Price).ToString("N0")) ₫</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <th colspan="3" class="text-end">Tổng cộng:</th>
-                            <th class="text-end text-danger">@Model.TotalAmount.ToString("N0") ₫</th>
+                        <tr style="background: #f8f9fa;">
+                            <th colspan="3" class="text-end" style="border-radius: 12px 0 0 12px; font-size: 1.1em;">Tổng cộng:</th>
+                            <th class="text-end text-danger fw-bold" id="totalAmount" style="font-size: 1.2em; border-radius: 0 12px 12px 0; background: #fff3f3;">@Model.TotalAmount.ToString("N0") ₫</th>
                         </tr>
                     </tfoot>
                 </table>
@@ -125,5 +155,53 @@
         methodSelect.addEventListener("change", toggleBankInfo);
         toggleBankInfo(); // Gọi lần đầu khi trang tải
     });
+
+    let discount = 0;
+    const originalTotal = @Model.TotalAmount;
+    function applyVoucher() {
+        var code = document.getElementById('voucherSelect').value;
+        var msg = '';
+        discount = 0;
+        if (code === 'NEW50') {
+            discount = 50000;
+            msg = 'Đã áp dụng mã giảm 50,000₫ cho người mới.';
+        } else if (code === 'FREESHIP') {
+            discount = 30000;
+            msg = 'Đã áp dụng mã miễn phí vận chuyển.';
+        } else {
+            msg = '';
+        }
+        document.getElementById('voucherMessage').innerText = msg;
+        updateTotal();
+    }
+    function updateTotal() {
+        var total = originalTotal - discount;
+        document.getElementById('totalAmount').innerText = total.toLocaleString() + ' ₫';
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<script>
+    let map, marker;
+
+    function initMap() {
+        const defaultLocation = { lat: 10.762622, lng: 106.660172 }; // Default to Ho Chi Minh City
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: defaultLocation,
+            zoom: 13,
+        });
+
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: true,
+        });
+
+        google.maps.event.addListener(marker, 'dragend', function () {
+            const position = marker.getPosition();
+            document.getElementById('latitude').value = position.lat();
+            document.getElementById('longitude').value = position.lng();
+        });
+    }
 </script>
 }

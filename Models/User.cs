@@ -10,5 +10,6 @@ namespace FigureShop.Models
         public string? Role { get; set; }           // Vai trò của người dùng (Admin, User, v.v.)
         public DateTime CreatedAt { get; set; }    // Thời gian tạo tài khoản
         public DateTime UpdatedAt { get; set; }    // Thời gian cập nhật tài khoản
+        public string? Language { get; set; }      // Ngôn ngữ của người dùng (vi, en)
     }
 }

@@ -30,6 +30,9 @@ namespace FigureShop.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("AvatarPath")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
@@ -42,6 +45,9 @@ namespace FigureShop.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("FullName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Language")
                         .HasColumnType("longtext");
 
                     b.Property<bool>("LockoutEnabled")
@@ -114,11 +120,74 @@ namespace FigureShop.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("FigureShop.Models.FlashSale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductId1")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId1");
+
+                    b.ToTable("FlashSales");
+                });
+
+            modelBuilder.Entity("FigureShop.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("FigureShop.Models.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime(6)");
@@ -137,6 +206,12 @@ namespace FigureShop.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<string>("VoucherCode")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("VoucherDiscount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -198,6 +273,12 @@ namespace FigureShop.Migrations
                     b.Property<string>("ImagePath3")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsFlashSale")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("IsPreOrder")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -213,6 +294,67 @@ namespace FigureShop.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("FigureShop.Models.ProductComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductComments");
+                });
+
+            modelBuilder.Entity("FigureShop.Models.ProductReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ProductReviews");
                 });
 
             modelBuilder.Entity("FigureShop.Models.ShoppingCart", b =>
@@ -388,6 +530,21 @@ namespace FigureShop.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FigureShop.Models.FlashSale", b =>
+                {
+                    b.HasOne("FigureShop.Models.Product", null)
+                        .WithOne("FlashSale")
+                        .HasForeignKey("FigureShop.Models.FlashSale", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FigureShop.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId1");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("FigureShop.Models.Order", b =>
                 {
                     b.HasOne("FigureShop.Models.ApplicationUser", "User")
@@ -427,6 +584,44 @@ namespace FigureShop.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("FigureShop.Models.ProductComment", b =>
+                {
+                    b.HasOne("FigureShop.Models.Product", "Product")
+                        .WithMany("ProductComments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FigureShop.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FigureShop.Models.ProductReview", b =>
+                {
+                    b.HasOne("FigureShop.Models.Product", "Product")
+                        .WithMany("ProductReviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FigureShop.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("FigureShop.Models.ShoppingCartItem", b =>
@@ -502,6 +697,15 @@ namespace FigureShop.Migrations
             modelBuilder.Entity("FigureShop.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("FigureShop.Models.Product", b =>
+                {
+                    b.Navigation("FlashSale");
+
+                    b.Navigation("ProductComments");
+
+                    b.Navigation("ProductReviews");
                 });
 
             modelBuilder.Entity("FigureShop.Models.ShoppingCart", b =>

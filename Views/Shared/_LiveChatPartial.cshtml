@@ -1,0 +1,128 @@
+@* _LiveChatPartial.cshtml *@
+
+<!-- Nút mở chat nổi -->
+<div id="chatFab" style="position: fixed; bottom: 32px; right: 32px; z-index: 9999;">
+    <button id="chatFabBtn" type="button" class="btn btn-warning rounded-circle shadow-lg position-relative"
+            style="width:64px; height:64px;" tabindex="0" aria-label="Mở chat">
+        <i class="bi bi-chat-dots" style="font-size: 2rem; pointer-events:none;"></i>
+        <span id="chatBadge"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 1em; display:none;">0</span>
+    </button>
+</div>
+
+<!-- Hộp thoại chat -->
+<div id="liveChatBox" class="card shadow-sm position-fixed"
+     style="bottom: 110px; right: 32px; width: 340px; z-index: 9999; display:none;">
+    <div class="card-header bg-primary text-white py-2 d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-chat-dots"></i> Hỗ trợ trực tuyến</span>
+        <button type="button" class="btn btn-sm btn-light" onclick="closeChatBox()">×</button>
+    </div>
+    <div class="card-body p-2" style="height: 260px; overflow-y: auto;" id="chatMessages">
+        <div class="text-muted small mb-2">Xin chào! Bạn cần hỗ trợ gì?</div>
+    </div>
+    <div class="card-footer p-2">
+        <form onsubmit="sendChatMessage(event)">
+            <div class="input-group">
+                <input type="text" id="chatInput" class="form-control" placeholder="Nhập tin nhắn..."
+                       autocomplete="off" />
+                <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Nút chuyển dark/light mode nổi, hình tròn, nằm trên livechat -->
+<div id="themeFab" style="position: fixed; bottom: 180px; right: 32px; z-index: 10000;">
+    <button id="toggle-global-theme" type="button" class="btn rounded-circle shadow-lg"
+            style="width:56px; height:56px; background: #7c3aed; color: #fff; border:none; display:flex; align-items:center; justify-content:center; font-size:1.7rem;"
+            title="Chuyển chế độ sáng/tối">
+        <span id="theme-icon">🌙</span>
+    </button>
+</div>
+
+<!-- Script xử lý chat -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chatFabBtn = document.getElementById('chatFabBtn');
+        const chatBox = document.getElementById('liveChatBox');
+        const chatBadge = document.getElementById('chatBadge');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        let chatUnread = 0;
+
+        if (!chatFabBtn || !chatBox) {
+            console.warn("Không tìm thấy phần tử chat. Kiểm tra ID trong HTML.");
+            return;
+        }
+
+        chatFabBtn.addEventListener('click', function () {
+            chatBox.style.display = 'block';
+            chatFabBtn.style.display = 'none';
+            chatUnread = 0;
+            chatBadge.style.display = 'none';
+        });
+
+        window.closeChatBox = function () {
+            chatBox.style.display = 'none';
+            chatFabBtn.style.display = 'block';
+        }
+
+        window.sendChatMessage = function (e) {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'text-end mb-1';
+            userMsg.innerHTML = `<span class="badge bg-primary">${msg}</span>`;
+            chatMessages.appendChild(userMsg);
+            chatInput.value = '';
+
+            // Phản hồi mẫu có điều kiện
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'text-start mb-1';
+
+                let response = 'Cảm ơn bạn! Nhân viên sẽ liên hệ sớm.';
+
+                const lowerMsg = msg.toLowerCase();
+
+                if (lowerMsg.includes('shop ở đâu')) {
+                    response = 'Shop ở Tân Phú, TP.HCM nhé!';
+                } else if (lowerMsg.includes('freeship') || lowerMsg.includes('free ship')) {
+                    response = 'Dạ, đơn từ 500k sẽ được freeship ạ.';
+                } else if (lowerMsg.includes('giờ') && (lowerMsg.includes('mở') || lowerMsg.includes('làm'))) {
+                    response = 'Shop mở cửa từ 7h đến 19h mỗi ngày nha bạn.';
+                } else if (lowerMsg.includes('cảm ơn')) {
+                    response = 'Bạn quá lịch sự luôn đó 🥰. Rất vui được hỗ trợ bạn!';
+                }
+
+                botMsg.innerHTML = `<span class="badge bg-light text-dark">${response}</span>`;
+                chatMessages.appendChild(botMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                chatUnread++;
+                chatBadge.innerText = chatUnread;
+                chatBadge.style.display = 'inline-block';
+            }, 700);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        const themeBtn = document.getElementById('toggle-global-theme');
+        const themeIcon = document.getElementById('theme-icon');
+        themeBtn.onclick = function() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            themeIcon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        };
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '☀️';
+        } else {
+            themeIcon.textContent = '🌙';
+        }
+    });
+</script>
+<link rel="stylesheet" href="~/css/livechat-theme.css" />

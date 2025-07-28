@@ -1,10 +1,16 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+﻿body.dark-mode .navbar,
+body.dark-mode footer.footer,
+body.dark-mode .footer {
+    background-color: #2c2c2c !important;
+    color: #fff !important;
+}
+/* Layout chuẩn hóa cho FigureShop */
 
+/* Link tham khảo cấu hình bundling */
 a.navbar-brand {
   white-space: normal;
   text-align: center;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 a {
@@ -17,7 +23,8 @@ a {
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
@@ -26,6 +33,7 @@ a {
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
+
 .border-bottom {
   border-bottom: 1px solid #e5e5e5;
 }
@@ -39,14 +47,9 @@ button.accept-policy {
   line-height: inherit;
 }
 
-.footer {
-  background-color: #2c2c2c;
-  padding: 10px 0 6px;     /* ↓ giảm padding để đỡ chiếm chiều cao */
-  font-size: 12px;
-  line-height: 1.4;         /* ↓ khoảng cách dòng */
-  color: #fff;
-}
-
+/* ------------------------------
+   Sticky Footer & Layout Setup
+---------------------------------*/
 html, body {
   height: 100%;
   margin: 0;
@@ -59,19 +62,26 @@ body {
   min-height: 100vh;
 }
 
+/* Nội dung chính co giãn đầy đủ */
 main {
   flex: 1 0 auto;
-  min-height: calc(100vh - 120px);
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
+/* Footer chuẩn - chỉ 1 định nghĩa duy nhất */
 footer.footer {
   flex-shrink: 0;
   background-color: #2c2c2c;
-  padding: 20px 0 10px;
-  font-size: 13px;
-  line-height: 1.5;
+  padding: 10px 0 6px;
+  font-size: 12px;
+  line-height: 1.4;
   color: #fff;
 }
+
+/* ------------------------------
+   Các phần mô tả sản phẩm
+---------------------------------*/
 .product-description {
   padding-left: 1.2rem;
   font-size: 15px;
@@ -81,4 +91,28 @@ footer.footer {
 
 .product-description li::marker {
   color: #555;
+}
+
+/* Responsive base font */
+html {
+  font-size: 14px;
+  min-height: 100%;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Focus ring cho các input/button */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+html, body {
+  overflow-x: hidden;
 }

@@ -1,12 +1,96 @@
+
 @model FigureShop.Models.ApplicationUser
 
-<h2>Delete User</h2>
+<style>
+    .delete-user-card {
+        background: rgba(255,255,255,0.13);
+        box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37), 0 0 0 4px rgba(255,152,0,0.3);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border-radius: 20px;
+        border: 3px solid #ff9800;
+        padding: 40px 32px 24px 32px;
+        max-width: 400px;
+        width: 100%;
+        margin: 60px auto;
+        color: #222;
+    }
+    .delete-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 18px;
+        color: #ff512f;
+    }
+    .delete-info {
+        text-align: center;
+        font-size: 1.1rem;
+        margin-bottom: 18px;
+    }
+    .delete-user-btn {
+        width: 100%;
+        border-radius: 30px;
+        font-weight: bold;
+        padding: 10px 0;
+        font-size: 1.1rem;
+        background: linear-gradient(90deg,#ff512f,#dd2476);
+        color: #fff;
+        border: none;
+        margin-bottom: 10px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .delete-user-btn:hover {
+        background: #d9534f;
+        color: #fff;
+    }
+    .cancel-user-btn {
+        width: 100%;
+        border-radius: 30px;
+        font-weight: bold;
+        padding: 10px 0;
+        font-size: 1.1rem;
+        background: #fff;
+        color: #222;
+        border: 2px solid #ff9800;
+        margin-bottom: 10px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .cancel-user-btn:hover {
+        background: #ff9800;
+        color: #fff;
+    }
+</style>
 
-<h3>Are you sure you want to delete this user?</h3>
-<div>
-    <b>UserName:</b> @Model.UserName
+
+<!-- Bootstrap Modal for Delete User -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal" style="display:none;" id="autoOpenDeleteModal">Xóa người dùng</button>
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius:18px;">
+      <div class="modal-header border-0" style="background: linear-gradient(90deg,#ff512f,#dd2476); border-radius:18px 18px 0 0;">
+        <h5 class="modal-title text-white fw-bold" id="deleteUserModalLabel">Xóa người dùng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-2">Bạn có chắc muốn xóa người dùng này?</div>
+        <div class="mb-3"><b>Tên đăng nhập:</b> @Model.UserName</div>
+      </div>
+      <div class="modal-footer border-0 d-flex justify-content-center gap-3" style="background:transparent;">
+        <form asp-action="Delete" method="post">
+          <button type="submit" class="btn fw-bold px-4 py-2" style="background: linear-gradient(90deg,#ff512f,#dd2476); color:#fff; border-radius:22px; font-size:1.1rem;">Xác nhận xóa</button>
+        </form>
+        <button type="button" class="btn btn-outline-secondary px-4 py-2" style="border-radius:22px; font-size:1.1rem;" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
 </div>
-<form asp-action="Delete" method="post">
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
-</form>
+
+<script>
+    window.onload = function() {
+        var modalBtn = document.getElementById('autoOpenDeleteModal');
+        if (modalBtn) {
+            modalBtn.click();
+        }
+    }
+</script>

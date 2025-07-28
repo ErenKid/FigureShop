@@ -2,11 +2,12 @@
 @{
     ViewData["Title"] = "Danh sách đơn hàng";
 }
-<h2>Danh sách đơn hàng</h2>
-<table class="table">
-    <thead>
+<h2 class="mb-4 fw-bold text-uppercase text-primary text-center" style="margin-top:40px;">Quản lý đơn hàng</h2>
+<div class="table-responsive">
+<table class="table table-bordered table-hover align-middle bg-white shadow-sm">
+    <thead class="table-light">
         <tr>
-            <th>Mã đơn hàng</th>
+            <th>Mã đơn</th>
             <th>Người đặt</th>
             <th>Ngày đặt</th>
             <th>Tổng tiền</th>
@@ -18,18 +19,45 @@
         @foreach (var order in Model)
         {
             <tr>
-                <td>@order.Id</td>
-                <td>@order.UserId</td>
-                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@order.TotalAmount.ToString("N0") VND</td>
-                <td>@order.Status</td>
+                <td class="fw-bold">#@order.Id</td>
                 <td>
+                    @if (order.User != null && !string.IsNullOrEmpty(order.User.FullName)) {
+                        @order.User.FullName
+                    } else if (order.User != null && !string.IsNullOrEmpty(order.User.UserName)) {
+                        @order.User.UserName
+                    } else {
+                        @order.UserId
+                    }
+                </td>
+                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td class="text-end text-danger fw-bold">@order.TotalAmount.ToString("N0") ₫</td>
+                <td>
+                    <span class="badge rounded-pill px-3 py-2" style="font-size:1rem; background:@GetStatusColor(order.Status); color:#fff;">@order.Status</span>
+                </td>
+                <td class="d-flex gap-2">
                     <a href="@Url.Action("Details", new { id = order.Id })" class="btn btn-info btn-sm">Chi tiết</a>
-                    <a href="@Url.Action("ChangeOrderStatus", new { orderId = order.Id, newStatus = "Shipped" })" class="btn btn-warning btn-sm">Đang giao</a>
-                    <a href="@Url.Action("ChangeOrderStatus", new { orderId = order.Id, newStatus = "Completed" })" class="btn btn-success btn-sm">Hoàn tất</a>
-                    <a href="@Url.Action("ChangeOrderStatus", new { orderId = order.Id, newStatus = "Cancelled" })" class="btn btn-danger btn-sm">Hủy</a>
+                    <a href="@Url.Action("ChangeStatus", new { orderId = order.Id, newStatus = "Shipped" })" class="btn btn-warning btn-sm">Đang giao</a>
+                    <a href="@Url.Action("ChangeStatus", new { orderId = order.Id, newStatus = "Completed" })" class="btn btn-success btn-sm">Hoàn tất</a>
+                    <a href="@Url.Action("ChangeStatus", new { orderId = order.Id, newStatus = "Cancelled" })" class="btn btn-danger btn-sm">Hủy</a>
+                    <form asp-action="Delete" asp-route-id="@order.Id" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa đơn này?');" style="display:inline;">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Xóa</button>
+                    </form>
                 </td>
             </tr>
         }
     </tbody>
-</table> 
+</table>
+</div>
+@functions {
+    public string GetStatusColor(string status)
+    {
+        return status switch
+        {
+            "Preparing" => "#ff512f",
+            "Shipped" => "#fbc2eb",
+            "Completed" => "#28a745",
+            "Cancelled" => "#dc3545",
+            _ => "#6c757d"
+        };
+    }
+}

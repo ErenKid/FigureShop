@@ -1,4 +1,7 @@
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.csproj.AssemblyReference.cache
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.Resources.Views.Shared.en.resources
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.Resources.Views.Shared.vi.resources
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.csproj.GenerateResource.cache
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.GeneratedMSBuildEditorConfig.editorconfig
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.AssemblyInfoInputs.cache
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.AssemblyInfo.cs
@@ -15,12 +18,17 @@ D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\FigureShop.deps.json
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\FigureShop.runtimeconfig.json
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\FigureShop.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\FigureShop.pdb
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\en\FigureShop.resources.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\vi\FigureShop.resources.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\EPPlus.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\EPPlus.Interfaces.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Google.Protobuf.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Humanizer.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\K4os.Compression.LZ4.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\K4os.Compression.LZ4.Streams.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\K4os.Hash.xxHash.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\MailKit.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.CodeAnalysis.dll
@@ -38,6 +46,8 @@ D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.Extensions.DependencyMod
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.IO.RecyclableMemoryStream.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\MimeKit.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Mono.TextTemplating.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\MySql.Data.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\MySql.EntityFrameworkCore.dll
@@ -49,6 +59,7 @@ D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Composition.Runtime.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Composition.TypedParts.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Configuration.ConfigurationManager.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.IO.Pipelines.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Security.Permissions.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Text.Encodings.Web.dll
@@ -112,8 +123,13 @@ D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win-x64\native\gssapi64.d
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win-x64\native\k5sprt64.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win-x64\native\krb5_64.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win-x64\native\krbcc64.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Windows.Extensions.dll
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\en\FigureShop.resources.cs
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\en\FigureShop.resources.dll
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\vi\FigureShop.resources.cs
+D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\vi\FigureShop.resources.dll
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\staticwebassets.build.json
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\staticwebassets.development.json
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\staticwebassets\msbuild.FigureShop.Microsoft.AspNetCore.StaticWebAssets.props
@@ -130,3 +146,8 @@ D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\refint\FigureShop.dll
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.pdb
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\FigureShop.genruntimeconfig.cache
 D:\LTW\FigureShop\FigureShop\obj\Debug\net8.0\ref\FigureShop.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\EPPlus.System.Drawing.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\System.Drawing.Common.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win\lib\net7.0\Microsoft.Win32.SystemEvents.dll
+D:\LTW\FigureShop\FigureShop\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Drawing.Common.dll

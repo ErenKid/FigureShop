@@ -1,22 +1,233 @@
-html {
-  font-size: 14px;
+body.dark-mode .flash-sale-gradient,
+body.dark-mode .flash-sale-gradient section,
+body.dark-mode .flash-sale-gradient .card,
+body.dark-mode .flash-sale-gradient .card-body,
+body.dark-mode .flash-sale-gradient * {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important;
+    color: #232323 !important;
+    border-color: #eee !important;
+}
+body.dark-mode .flash-sale-gradient .card,
+body.dark-mode .flash-sale-gradient .card-body {
+    background: #fff !important;
+    color: #232323 !important;
+    border-color: #eee !important;
+}
+body.dark-mode .flash-sale-gradient section {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important;
+}
+body.dark-mode .flash-sale-gradient {
+    background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%) !important;
+}
+body.dark-mode .flash-sale-gradient .card,
+body.dark-mode .flash-sale-gradient .card-body {
+    background: #fff !important;
+    color: #232323 !important;
+    border-color: #eee !important;
+}
+body.dark-mode {
+    background: #232323 !important;
+    color: #f1f1f1 !important;
+    text-align: initial !important;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.dark-mode .card,
+.dark-mode .container,
+.dark-mode .row,
+/* .dark-mode .navbar, .dark-mode .footer { ... } removed: navbar/footer keep light mode colors */
+/* UI chung cho giao diện */
+
+a.navbar-brand {
+  white-space: normal;
+  word-break: break-word;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+a {
+  color: #0077cc;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+.product-description {
+  padding-left: 1.2rem;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.product-description li::marker {
+  color: #555;
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Focus ring giữ lại nếu cần */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+body.dark-mode {
+    background-color: #181818 !important;
+    color: #f3f3f3 !important;
 }
 
-body {
-  margin-bottom: 60px;
+body.dark-mode .card,
+body.dark-mode .card-header,
+body.dark-mode .card-body,
+body.dark-mode .list-group,
+body.dark-mode .list-group-item {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode a,
+body.dark-mode .btn-link {
+    color: #a3a3ff !important;
+}
+
+body.dark-mode .btn,
+body.dark-mode .badge {
+    background-color: #333 !important;
+    color: #f3f3f3 !important;
+}
+
+body.dark-mode .form-control {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .table,
+body.dark-mode .table th,
+body.dark-mode .table td {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+}
+
+body.dark-mode .product-grid,
+body.dark-mode .product-card,
+body.dark-mode .card,
+body.dark-mode .card-body {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode .product-card .btn,
+body.dark-mode .product-card .badge {
+    background-color: #333 !important;
+    color: #f3f3f3 !important;
+}
+
+body.dark-mode .dropdown-item {
+    color: #f3f3f3 !important;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: #333 !important;
+}
+
+body.dark-mode .dropdown-menu,
+body.dark-mode .dropdown-item {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+}
+body.dark-mode .dropdown-item:active,
+body.dark-mode .dropdown-item.active {
+    background-color: #3b82f6 !important;
+    color: #fff !important;
+}
+body.dark-mode .dropdown-menu .btn,
+body.dark-mode .dropdown-menu .btn:active {
+    background-color: #333 !important;
+    color: #f3f3f3 !important;
+    border-color: #444 !important;
+}
+
+/* body.dark-mode footer, body.dark-mode .footer, body.dark-mode #footer { ... } removed: footer keeps light mode colors */
+
+/* body.dark-mode footer a, body.dark-mode .footer a, body.dark-mode #footer a { ... } removed: footer links keep light mode colors */
+
+body.dark-mode .category-box,
+body.dark-mode .category-list,
+body.dark-mode .category-item {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+    border-color: #444 !important;
+}
+body.dark-mode .category-item.active {
+    background-color: #3b82f6 !important;
+    color: #fff !important;
+}
+body.dark-mode .category-title {
+    color: #fff !important;
+}
+
+body.dark-mode .container,
+body.dark-mode .container-fluid,
+body.dark-mode .row,
+body.dark-mode .col,
+body.dark-mode .content,
+body.dark-mode .section,
+body.dark-mode .main-content {
+    background-color: #181818 !important;
+    color: #f3f3f3 !important;
+}
+body.dark-mode .bg-white,
+body.dark-mode .bg-light {
+    background-color: #232323 !important;
+    color: #f3f3f3 !important;
+}
+body.dark-mode,
+body.dark-mode html,
+body.dark-mode #main-wrapper,
+body.dark-mode .wrapper,
+body.dark-mode .content-wrapper,
+body.dark-mode .page-content,
+body.dark-mode .main-content,
+body.dark-mode .bg-white,
+body.dark-mode .bg-light {
+    background-color: #181818 !important;
+    color: #f3f3f3 !important;
+}
+
+body.dark-mode section[style*='#f8f9fa'],
+body.dark-mode section[style*='background: #f8f9fa'],
+body.dark-mode section[style*='background:#f8f9fa'],
+body.dark-mode section[style*='background: rgb(248,249,250)'],
+body.dark-mode section[style*='background:#fff'],
+body.dark-mode section[style*='background: #fff'] {
+    background-color: #181818 !important;
+    color: #f3f3f3 !important;
 }

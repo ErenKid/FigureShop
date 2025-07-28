@@ -1,30 +1,74 @@
 @model IEnumerable<FigureShop.Models.ApplicationUser>
 
-<h2>Users</h2>
-<p>
-    <a href="@Url.Action("Create")">Create New User</a>
-</p>
-<table>
-    <thead>
-        <tr>
-            <th>UserName</th>
-            <th>Email</th>
-            <th>Full Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.UserName</td>
-                <td>@item.Email</td>
-                <td>@item.FullName</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = item.Id })">Edit</a> |
-                    <a href="@Url.Action("Delete", new { id = item.Id })">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary text-center" style="margin-top:40px; width:100%;"><i class="bi bi-people"></i> Quản lý người dùng</h2>
+        <a href="@Url.Action("Create")" class="btn btn-success rounded-pill px-4">
+            <i class="bi bi-person-plus"></i> Thêm người dùng
+        </a>
+    </div>
+    <div class="card shadow border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Avatar</th>
+                            <th scope="col">Tên đăng nhập</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Họ tên</th>
+                            <th scope="col" class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@(item.AvatarPath ?? "/images/default-avatar.jpg")" class="rounded-circle shadow" width="48" height="48" style="object-fit:cover;" alt="Avatar" />
+                                </td>
+                                <td class="fw-bold">@item.UserName</td>
+                                <td>@item.Email</td>
+                                <td>@item.FullName</td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm rounded-pill mx-1">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning btn-sm rounded-pill mx-1">
+                                        <i class="bi bi-pencil-square"></i> Sửa
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm rounded-pill mx-1" onclick="confirmDeleteUser('@item.Id', this)">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function confirmDeleteUser(userId, btn) {
+    if (confirm('Bạn chắc chắn muốn xóa người dùng này?')) {
+        // Lấy token từ form đầu trang
+        var token = document.querySelector('input[name="__RequestVerificationToken"]');
+        fetch('/User/Delete/' + userId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: token ? `__RequestVerificationToken=${encodeURIComponent(token.value)}` : ''
+        })
+        .then(res => {
+            if (res.ok) {
+                var row = btn.closest('tr');
+                if (row) row.remove();
+            } else {
+                alert('Xóa không thành công!');
+            }
+        });
+    }
+}
+</script>

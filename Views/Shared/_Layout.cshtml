@@ -11,6 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FigureShop.styles.css" asp-append-version="true" />
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
     <style>
         body, main, .container {
             background: transparent !important;
@@ -18,142 +20,331 @@
         }
     </style>
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column" style="min-height: 100vh;">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-            <div class="container">
-                <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Home")">FigureShop</a>
-                
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "Product")">All Products</a>
-                        </li>
-                        <!-- Nếu muốn có dropdown riêng cho category thì thêm menu này -->
-                        <!--
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-2">
+        <div class="container-fluid px-lg-5 px-2">
+            <a class="navbar-brand fw-bold fs-3 text-warning" href="@Url.Action("Index", "Home")" style="letter-spacing:1px;"><i class="bi bi-fire"></i> FigureShop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav gap-2 mx-auto">
+                    <li class="nav-item"><a class="nav-link fw-semibold" href="@Url.Action("Index", "Product")">Sản phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Hot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Sale</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Order nhanh</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#preorder-section">Pre-order</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">News</a></li>
+                </ul>
+                <form class="d-flex position-relative mx-auto" id="navbar-search-form" autocomplete="off" style="max-width:340px; min-width:220px;" onsubmit="return false;">
+                    <div class="input-group rounded-pill shadow-sm" style="background:#fff;">
+                        <span class="input-group-text bg-white border-0 px-2" style="border-radius:16px 0 0 16px;">
+                            <i class="bi bi-search text-secondary"></i>
+                        </span>
+                        <input class="form-control border-0 px-2" type="search" placeholder="Tìm sản phẩm..." aria-label="Search" id="navbar-search-box" style="border-radius:0 16px 16px 0; min-width:140px; background:#fff;" autocomplete="off">
+                    </div>
+        <ul id="navbar-suggestions" class="list-group position-absolute shadow-lg" style="z-index:1000; left:50%; transform:translateX(-50%); width:420px; min-width:320px; max-width:98vw; top:56px; display:none; max-height:400px; overflow-y:auto; border-radius:18px; background:#fff; border:1px solid #eee; box-shadow:0 8px 32px rgba(0,0,0,0.10);">
+                    </ul>
+                </form>
+                <ul class="navbar-nav ms-auto gap-3 align-items-center">
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link d-flex align-items-center gap-2" href="@Url.Action("Index", "ShoppingCart")">
+                            <i class="bi bi-cart3" style="font-size: 1.3rem;"></i>
+                            <span>Giỏ hàng</span>
+                        </a>
+                    </li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="#" id="notificationBell">
+                            <i class="bi bi-bell" style="font-size: 1.3rem;"></i>
+                            <span id="notificationDot" style="display:@((ViewBag.NotificationList != null && ((List<string>)ViewBag.NotificationList).Count > 0) ? "block" : "none"); position:absolute; top:8px; right:8px; width:10px; height:10px; background:#ff512f; border-radius:50%;"></span>
+                        </a>
+                        <div id="notificationPopup" class="position-absolute end-0 mt-2" style="min-width:260px; z-index:9999; display:none;">
+                            <div class="shadow-lg bg-white mb-0 py-2 px-3" style="border-radius:14px; font-size:1rem; max-height:320px; overflow-y:auto; box-shadow:0 4px 24px rgba(0,0,0,0.12);">
+                                <ul class="mb-0 ps-0" style="list-style:none;">
+                                    @if (ViewBag.NotificationList != null && ((List<string>)ViewBag.NotificationList).Count > 0)
+                                    {
+                                        int idx = 0;
+                                        foreach (var n in (List<string>)ViewBag.NotificationList)
+                                        {
+                                            var notificationId = ViewBag.NotificationIds != null ? ((List<int>)ViewBag.NotificationIds)[idx] : idx;
+                                            var notificationOrderIds = ViewBag.NotificationOrderIds != null ? (List<int?>)ViewBag.NotificationOrderIds : new List<int?>();
+                                            var orderId = notificationOrderIds.Count > idx ? notificationOrderIds[idx] : null;
+                                            <li id="notification-item-@notificationId" class="d-flex align-items-center justify-content-between gap-2 mb-2 px-2 py-2" style="background:#f7fafd; border-radius:8px; border:1px solid #e3e8ee; box-shadow:0 1px 4px rgba(0,0,0,0.04);">
+                                                <div style="display:flex;align-items:center;width:100%;">
+                                                    @if (orderId != null)
+                                                    {
+                                                        <a href="/Order/OrderHistory" style="flex:1; color:#333; text-decoration:none; padding:8px 0; display:block; cursor:pointer; border-radius:6px; transition:background 0.2s; z-index:2; position:relative;">@n</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="flex:1; color:#333;">@n</span>
+                                                    }
+                                                    <button type="button" class="btn btn-sm btn-link text-danger px-1 py-0" style="font-size:1.1rem; z-index:3; position:relative;" onclick="deleteNotification(@notificationId)"><i class="bi bi-x-lg"></i></button>
+                                                </div>
+                                            </li>
+                                            idx++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="text-muted">Không có thông báo nào.</li>
+                                    }
+                                </ul>
+                            </div>
+                            <script src="/js/notification.js"></script>
+                        </div>
+                    </li>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        var user = await UserManager.GetUserAsync(User);
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown">
-                                Categories
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle" style="font-size: 1.8rem;"></i>
+                                <span class="fw-semibold">@user.FullName</span>
                             </a>
-                            <ul class="dropdown-menu">
-                                @foreach (var category in ViewBag.Categories ?? new List<FigureShop.Models.Category>())
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                @if (User.IsInRole("Admin"))
                                 {
-                                    <li>
-                                        <a class="dropdown-item" href="@Url.Action("Index", "Product", new { categoryId = category.Id })">
-                                            @category.Name
-                                        </a>
-                                    </li>
+                                    <li><a class="dropdown-item text-danger" href="@Url.Action("Index", "Category")">🗂️ Quản lý danh mục</a></li>
+                                    <li><a class="dropdown-item text-danger" href="@Url.Action("Index", "User")">👤 Quản lý user</a></li>
+                                    <li><a class="dropdown-item text-danger" href="@Url.Action("Index", "Order", new { area = "" })">📦 Quản lý đơn hàng</a></li>
+                                    <li><hr class="dropdown-divider" /></li>
                                 }
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("Details", "User", new { id = user.Id })">👁️ Thông tin cá nhân</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("Edit", "User", new { id = user.Id })">✏️ Chỉnh sửa</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="@Url.Action("OrderHistory", "Order")">📦 Đơn hàng của tôi</a>
+                                </li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="px-3">
+                                        <button type="submit" class="btn btn-link text-danger p-0">🚪 Đăng xuất</button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
-                        -->
+                    }
+                    else
+                    {
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Hot</a>
+                            <a class="nav-link" href="@Url.Action("Login", "Account")">Đăng nhập</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Sale</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Order nhanh</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pre-order</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">News</a>
-                        </li>
-                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="@Url.Action("Index", "Product")">Quản lý sản phẩm</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="@Url.Action("Index", "Category")">Quản lý danh mục</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="@Url.Action("Index", "User")">Quản lý user</a>
-                            </li>
-                        }
-                    </ul>
-                    
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="@Url.Action("Index", "ShoppingCart")">
-                                <i class="fas fa-shopping-cart"></i> Cart
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                    }
+                </ul>
             </div>
-        </nav>
-    </header>
-    <main role="main" class="flex-fill">
+        </div>
+    </nav>
+</header>
+
+    <main role="main" class="flex-fill" style="flex: 1 0 auto;">
         @RenderBody()
+        @await Html.PartialAsync("_LiveChatPartial")
+        <script>
+            $(document).ready(function () {
+                // Notification bell
+                var bell = document.getElementById('notificationBell');
+                var popup = document.getElementById('notificationPopup');
+                if (bell && popup) {
+                    bell.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        popup.style.display = (popup.style.display === 'none') ? 'block' : 'none';
+                    });
+                }
+                // Product search suggest
+                let timer;
+                $('#navbar-search-box').on('input', function () {
+                    clearTimeout(timer);
+                    const term = $(this).val();
+                    if (term.length < 2) {
+                        $('#navbar-suggestions').hide().html('');
+                        return;
+                    }
+                    timer = setTimeout(function () {
+                        $.ajax({
+                            url: '/Product/Search',
+                            type: 'GET',
+                            data: { term: term },
+                            success: function (data) {
+            if (!data || data.length === 0) {
+                $('#navbar-suggestions').hide().html('');
+                return;
+            }
+            let list = '';
+            data.forEach(item => {
+            list += `<li class="list-group-item list-group-item-action py-3 px-4 d-grid gap-3 suggest-item" data-id="${item.id}" style="cursor:pointer; border:none; border-bottom:1px solid #f0f0f0; transition:background 0.2s; grid-template-columns:72px 1fr; align-items:center;">
+                <img src="${item.imagePath || '/images/no-image.png'}" alt="${item.name}" style="width:72px; height:72px; object-fit:cover; border-radius:14px; background:#f7f7f7; border:1px solid #eee; box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                <div class="flex-grow-1 text-start d-flex flex-column justify-content-center" style="min-width:0;">
+                    <div class="fw-bold text-dark mb-1" style="font-size:1.18rem; line-height:1.35; word-break:break-word;">${item.name}</div>
+                    <div class="mt-2">
+                        <span class="fw-bold text-danger" style="font-size:1.28rem; letter-spacing:0.5px;">${item.price.toLocaleString('vi-VN')}₫</span>
+                    </div>
+                </div>
+            </li>`;
+            });
+            $('#navbar-suggestions').html(list).show();
+            // Thêm hiệu ứng hover cho suggest-item
+            $('#navbar-suggestions .suggest-item').hover(
+                function() { $(this).css('background','#f7fafd'); },
+                function() { $(this).css('background','#fff'); }
+            );
+                            }
+                        });
+                    }, 300);
+                });
+                // Click on suggestion
+                $('#navbar-suggestions').on('click', 'li', function () {
+                    const id = $(this).data('id');
+                    if (id) {
+                        window.location.href = '/Product/Details/' + id;
+                    }
+                });
+                // Hide suggest when click outside
+                $(document).on('click', function (e) {
+                    if (!$('#navbar-search-box').is(e.target) && !$('#navbar-suggestions').is(e.target) && $('#navbar-suggestions').has(e.target).length === 0) {
+                        $('#navbar-suggestions').hide().html('');
+                    }
+                });
+            });
+        </script>
     </main>
 
-   <footer class="footer text-white mt-auto pt-4 pb-2" style="background: #2c2c2c;">
-    <div class="container">
-        <div class="row gy-3 small">
-            <!-- Cột 1 -->
-            <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-2">Kiệt Figure</h6>
-                <p class="mb-1">Chuyên cung cấp mô hình chính hãng.</p>
-                <p class="mb-1">Sản phẩm đa dạng, nhận tìm theo yêu cầu.</p>
-            </div>
 
-            <!-- Cột 2 -->
-            <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-2">Liên hệ</h6>
-                <p class="mb-1">Đ/c: Chung cư Gò Dầu 2 lô A,<br>P. Tân Sơn Nhì, Q. Tân Phú</p>
-                <p class="mb-1">Điện thoại: <a href="tel:0961855997" class="text-white">0961855997</a></p>
-                <p class="mb-0">Giờ mở cửa: 7:00 - 19:00</p>
-            </div>
 
-            <!-- Cột 3 -->
-            <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-2">Facebook</h6>
-                <a href="https://www.facebook.com/nam.kiet.312995/" target="_blank" class="d-flex align-items-center text-white text-decoration-none">
-                    <img src="https://graph.facebook.com/nam.kiet.312995/picture?type=normal"
-                         alt="Facebook avatar"
-                         style="width:32px; height:32px; border-radius:50%; margin-right:8px;">
-                    <span class="small">Nam Kiệt (Facebook)</span>
-                </a>
+    <footer class="footer bg-dark text-light mt-auto pt-5 pb-3 border-top" style="width: 100%; letter-spacing: 0.01em;">
+        <div class="container">
+            <div class="row gy-4 align-items-stretch text-center text-lg-start">
+                <div class="col-lg-3 col-md-6 mb-3 d-flex flex-column justify-content-between">
+                    <div>
+                        <h4 class="fw-bold text-uppercase mb-3 text-warning" style="font-size:2rem;"><i class="bi bi-fire"></i> KIỆT FIGURE</h4>
+                        <p class="mb-2 fs-5">Mô hình anime chính hãng, đa dạng, nhận order theo yêu cầu.</p>
+                        <p class="mb-1 fs-6"><i class="bi bi-geo-alt"></i> Chung cư Gò Dầu 2 lô A, Tân Sơn Nhì, Q. Tân Phú</p>
+                        <p class="mb-1 fs-6"><i class="bi bi-telephone"></i> <a href="tel:0961855997" class="text-white text-decoration-underline">0961855997</a></p>
+                        <p class="mb-1 fs-6"><i class="bi bi-envelope"></i> <a href="mailto:figure.shop@gmail.com" class="text-white text-decoration-underline">figure.shop@gmail.com</a></p>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <h5 class="fw-bold text-uppercase mb-3" style="font-size:1.3rem;">Chính sách</h5>
+                    <ul class="list-unstyled fs-6">
+                        <li><a href="#" class="text-white-50 text-decoration-none">Tìm kiếm</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Giới thiệu</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Giao hàng & đổi trả</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Bảo mật</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <h5 class="fw-bold text-uppercase mb-3" style="font-size:1.3rem;">Hướng dẫn</h5>
+                    <ul class="list-unstyled fs-6">
+                        <li><a href="#" class="text-white-50 text-decoration-none">Danh mục blog</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <h5 class="fw-bold text-uppercase mb-3" style="font-size:1.3rem;">Tổng đài hỗ trợ</h5>
+                    <p class="mb-1 fs-6">Gọi mua hàng: <a href="tel:0961855997" class="text-white text-decoration-underline">0961855997</a></p>
+                    <p class="mb-1 fs-6">Gọi bảo hành: <a href="tel:0384586102" class="text-white text-decoration-underline">0384586102</a></p>
+                    <p class="mb-1 fs-6">Gọi hợp tác: <a href="tel:0399200830" class="text-white text-decoration-underline">0399200830</a></p>
+                    <div class="mt-2">
+                        <a href="#" class="text-white me-2"><i class="bi bi-facebook" style="font-size: 1.6rem;"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-twitter" style="font-size: 1.6rem;"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-instagram" style="font-size: 1.6rem;"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-youtube" style="font-size: 1.6rem;"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-12 mb-3 d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="fw-bold text-uppercase mb-3" style="font-size:1.3rem;">Đăng ký nhận tin</h5>
+                        <form class="d-flex justify-content-center justify-content-lg-start">
+                            <input type="email" class="form-control me-2 rounded-pill fs-6" placeholder="Email nhận tin khuyến mãi..." style="max-width: 70%; min-width:180px;" />
+                            <button class="btn btn-warning rounded-pill px-4 fs-6" type="submit">Đăng ký</button>
+                        </form>
+                    </div>
+                    <div class="mt-4 text-center text-lg-end">
+                        <span class="me-2 text-white-50 fs-6">PHƯƠNG THỨC THANH TOÁN</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" style="height:24px; margin-right:10px; vertical-align:middle;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png" alt="Mastercard" style="height:24px; margin-right:10px; vertical-align:middle;">
+                        <img src="https://www.citypng.com/public/uploads/preview/hd-mastercard-payment-logo-transparent-background-701751694777780z7xaiuu0sh.png" alt="PayPal" style="height:24px; margin-right:10px; vertical-align:middle;">
+                    </div>
+                </div>
             </div>
-
-            <!-- Cột 4 -->
-            <div class="col-lg-3 col-md-6">
-                <h6 class="fw-bold mb-2">Chỉ đường</h6>
-                <div class="ratio ratio-4x3" style="max-width: 100%; height: 120px;">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.989710179479!2d106.6273844!3d10.7954823!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529557092f86f%3A0xc5af738b3d6c91f5!2zQ2h1bmcgY8awIEfhu5MgxJDDtG4gMiBMw7ogQSwgVMOibiBQaMO6!5e0!3m2!1svi!2s!4v1720000000000"
-                            width="100%" height="90" style="border:0;" allowfullscreen loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <hr class="my-3 border-light opacity-25" />
+            <div class="row">
+                <div class="col-12 text-center small mt-2 text-white-50">
+                    &copy; 2025 - <strong>Kiệt Figure</strong>. Powered by FigureShop.
                 </div>
             </div>
         </div>
-
-        <hr class="my-3 border-light opacity-25" />
-
-        <div class="row align-items-center small">
-            <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
-                <span>&copy; 2025 - <strong>Kiệt Figure</strong>. All rights reserved.</span>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa" style="height:20px; margin-right:6px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="Mastercard" style="height:20px; margin-right:6px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/PayPal_Logo.png" alt="PayPal" style="height:20px; margin-right:6px;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Stripe_Logo%2C_revised_2016.png" alt="Stripe" style="height:20px;">
-            </div>
-        </div>
-    </div>
-</footer>
-
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <!-- Đã di chuyển script này xuống cuối file để đảm bảo jQuery đã được load trước -->
+    <script>
+        $(document).ready(function () {
+            // Notification bell
+            var bell = document.getElementById('notificationBell');
+            var popup = document.getElementById('notificationPopup');
+            if (bell && popup) {
+                bell.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    popup.style.display = (popup.style.display === 'none') ? 'block' : 'none';
+                });
+            }
+            // Product search suggest
+            let timer;
+            $('#navbar-search-box').on('input', function () {
+                clearTimeout(timer);
+                const term = $(this).val();
+                if (term.length < 2) {
+                    $('#navbar-suggestions').hide().html('');
+                    return;
+                }
+                timer = setTimeout(function () {
+                    $.ajax({
+                        url: '/Product/Search',
+                        type: 'GET',
+                        data: { term: term },
+                        success: function (data) {
+                            if (!data || data.length === 0) {
+                                $('#navbar-suggestions').hide().html('');
+                                return;
+                            }
+                            let list = '';
+                            data.forEach(item => {
+                                list += `<li class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2" data-id="${item.id}" style="cursor:pointer; border:none; border-bottom:1px solid #f0f0f0;">
+                                    <img src="${item.imagePath || '/images/no-image.png'}" alt="${item.name}" style="width:40px; height:40px; object-fit:cover; border-radius:8px; background:#f7f7f7; border:1px solid #eee;">
+                                    <div class="flex-grow-1 text-start">
+                                        <div class="fw-semibold" style="font-size:1rem;">${item.name}</div>
+                                        <div class="mt-1">
+                                            <span class="fw-bold text-danger" style="font-size:1.1rem;">${item.price.toLocaleString('vi-VN')}₫</span>
+                                        </div>
+                                    </div>
+                                </li>`;
+                            });
+                            $('#navbar-suggestions').html(list).show();
+                        }
+                    });
+                }, 300);
+            });
+            // Click on suggestion
+            $('#navbar-suggestions').on('click', 'li', function () {
+                const id = $(this).data('id');
+                if (id) {
+                    window.location.href = '/Product/Details/' + id;
+                }
+            });
+            // Hide suggest when click outside
+            $(document).on('click', function (e) {
+                if (!$('#navbar-search-box').is(e.target) && !$('#navbar-suggestions').is(e.target) && $('#navbar-suggestions').has(e.target).length === 0) {
+                    $('#navbar-suggestions').hide().html('');
+                }
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

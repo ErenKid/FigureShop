@@ -1,11 +1,12 @@
 @model FigureShop.Models.ShoppingCart
 
+
 <div class="container py-5">
     <h2 class="text-center mb-4"><i class="fas fa-shopping-cart"></i> Giỏ hàng của bạn</h2>
 
     @if (Model.Items.Count == 0)
     {
-        <div class="alert alert-info text-center">🛒 Giỏ hàng của bạn đang trống.</div>
+        <div class="alert alert-info text-center">🛒 Giỏ hàng trống</div>
     }
     else
     {
@@ -13,6 +14,9 @@
             <table class="table table-bordered table-hover align-middle shadow-sm">
                 <thead class="table-light text-center">
                     <tr>
+                        <th style="width:48px;" class="text-center">
+                            <input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)" title="Chọn tất cả" />
+                        </th>
                         <th style="min-width: 280px;">Sản phẩm</th>
                         <th style="width: 120px;">Số lượng</th>
                         <th>Đơn giá</th>
@@ -24,6 +28,9 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
+                            <td class="text-center">
+                                <input type="checkbox" name="selectedItems" value="@item.Id" class="item-checkbox" />
+                            </td>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
                                     <img src="@item.Product?.ImagePath" alt="@item.Product?.Name"
@@ -35,7 +42,7 @@
                                 </div>
                             </td>
                             <td class="text-center">
-                                <input type="number" value="@item.Quantity" min="1"
+                                <input type="number" value="@item.Quantity" min="1" max="@item.Product?.Stock"
                                        onchange="updateQuantity(@item.Id, this.value)"
                                        class="form-control form-control-sm text-center" />
                             </td>
@@ -73,11 +80,14 @@
 
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4 gap-3">
             <h4 class="text-danger fw-bold mb-0">
-                Tổng cộng: <span id="totalAmount">@Model.TotalAmount.ToString("N0") ₫</span>
+                Tổng cộng: <span id="totalAmount">0 ₫</span>
             </h4>
-            <a href="@Url.Action("Checkout", "Order")" class="btn btn-success btn-lg">
-                <i class="fas fa-credit-card"></i> Thanh toán
-            </a>
+            <form action="@Url.Action("Checkout", "Order")" method="get" id="checkoutForm">
+                <input type="hidden" name="selectedItemIds" id="selectedItemIds" />
+                <button type="submit" class="btn btn-success btn-lg" @(Model.Items.Count == 0 ? "disabled" : "")>
+                    Thanh toán
+                </button>
+            </form>
         </div>
 
         @if (ViewBag.Message != null)
@@ -89,6 +99,23 @@
 
 @section Scripts {
 <script>
+    // Giới hạn số lượng không vượt quá stock
+    document.querySelectorAll('input[type="number"]').forEach(function(input) {
+        input.addEventListener('input', function() {
+            var max = parseInt(input.getAttribute('max'));
+            var val = parseInt(input.value);
+            if (val > max) {
+                input.value = max;
+            }
+            if (val < 1 || isNaN(val)) {
+                input.value = 1;
+            }
+        });
+    });
+    // Khi vào trang, tổng cộng mặc định là 0
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('totalAmount').innerText = '0 ₫';
+    });
     function updateQuantity(itemId, quantity) {
         fetch('/ShoppingCart/UpdateQuantityAjax', {
             method: 'POST',
@@ -102,7 +129,45 @@
         .then(data => {
             document.getElementById('totalAmount').innerText = data.totalAmount + " ₫";
             document.getElementById('itemTotal_' + itemId).innerText = data.itemTotal + " ₫";
+            updateSelectedTotal();
         });
     }
+
+    // Checkbox logic
+    function toggleAllCheckboxes(source) {
+        document.querySelectorAll('.item-checkbox').forEach(function(cb) {
+            cb.checked = source.checked;
+        });
+        updateSelectedTotal();
+    }
+    document.querySelectorAll('.item-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', updateSelectedTotal);
+    });
+
+    function updateSelectedTotal() {
+        var total = 0;
+        document.querySelectorAll('.item-checkbox:checked').forEach(function(cb) {
+            var row = cb.closest('tr');
+            var priceCell = row.querySelector('td[id^="itemTotal_"]');
+            if (priceCell) {
+                var value = priceCell.innerText.replace(/[^\d]/g, '');
+                total += parseInt(value || '0');
+            }
+        });
+        document.getElementById('totalAmount').innerText = (total > 0 ? total.toLocaleString() : '0') + " ₫";
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        var selected = Array.from(document.querySelectorAll('.item-checkbox:checked')).map(cb => cb.value);
+        if (selected.length === 0) {
+            alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
+            e.preventDefault();
+            return;
+        }
+        // Chuyển selectedItemIds sang query string
+        var url = this.action + '?selectedItemIds=' + encodeURIComponent(selected.join(','));
+        window.location.href = url;
+        e.preventDefault();
+    });
 </script>
 }

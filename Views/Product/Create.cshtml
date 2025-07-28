@@ -1,90 +1,92 @@
 @model FigureShop.Models.Product
-
 @{
     ViewData["Title"] = "Thêm sản phẩm mới";
 }
-
-<div class="container mt-4">
-    <h2 class="mb-4">Thêm sản phẩm mới</h2>
-
-    <form asp-action="Create" method="post" class="needs-validation" novalidate>
-        <div class="row g-3">
-            <div class="col-md-6">
-                <label asp-for="Name" class="form-label">Tên sản phẩm</label>
-                <input asp-for="Name" class="form-control" required />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="Price" class="form-label">Giá gốc</label>
-                <input asp-for="Price" class="form-control" required />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6" id="discountField" style="display:none;">
-                <label asp-for="DiscountPrice" class="form-label">Giá khuyến mãi</label>
-                <input asp-for="DiscountPrice" class="form-control" />
-                <span asp-validation-for="DiscountPrice" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="CategoryId" class="form-label">Danh mục</label>
-                <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId" required id="CategoryId">
-                    <option value="">-- Chọn danh mục --</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6">
-                <label asp-for="Stock" class="form-label">Số lượng tồn</label>
-                <input asp-for="Stock" class="form-control" required />
-                <span asp-validation-for="Stock" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-12">
-                <label asp-for="Description" class="form-label">Mô tả</label>
-                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-4">
-                <label asp-for="ImagePath" class="form-label">Ảnh chính</label>
-                <input asp-for="ImagePath" class="form-control" />
-                <span asp-validation-for="ImagePath" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-4">
-                <label asp-for="ImagePath2" class="form-label">Ảnh phụ 2</label>
-                <input asp-for="ImagePath2" class="form-control" />
-                <span asp-validation-for="ImagePath2" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-4">
-                <label asp-for="ImagePath3" class="form-label">Ảnh phụ 3</label>
-                <input asp-for="ImagePath3" class="form-control" />
-                <span asp-validation-for="ImagePath3" class="text-danger"></span>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0" style="border-radius: 18px;">
+                <div class="card-header text-white" style="background: linear-gradient(90deg,#ff512f,#a18cd1); border-radius:18px 18px 0 0;">
+                    <h3 class="mb-0 fw-bold" style="letter-spacing:1px;">Thêm sản phẩm mới</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post" class="needs-validation" novalidate autocomplete="off">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label fw-semibold">Tên sản phẩm</label>
+                                <input asp-for="Name" class="form-control form-control-lg" required placeholder="Nhập tên sản phẩm" />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label fw-semibold">Giá gốc</label>
+                                <input asp-for="Price" class="form-control form-control-lg" required placeholder="Nhập giá gốc" />
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6" id="discountField" style="display:none;">
+                                <label asp-for="DiscountPrice" class="form-label fw-semibold">Giá khuyến mãi</label>
+                                <input asp-for="DiscountPrice" class="form-control form-control-lg" placeholder="Nhập giá khuyến mãi" />
+                                <span asp-validation-for="DiscountPrice" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="CategoryId" class="form-label fw-semibold">Danh mục</label>
+                                <select asp-for="CategoryId" class="form-select form-select-lg" required id="CategoryId">
+                                    <option value="">-- Chọn danh mục --</option>
+                                    @if (ViewBag.Categories != null)
+                                    {
+                                        foreach (var cat in ViewBag.Categories)
+                                        {
+                                            <option value="@cat.Id">@cat.Name</option>
+                                        }
+                                    }
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Stock" class="form-label fw-semibold">Số lượng tồn</label>
+                                <input asp-for="Stock" class="form-control form-control-lg" required placeholder="Nhập số lượng tồn" />
+                                <span asp-validation-for="Stock" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-12">
+                                <label asp-for="Description" class="form-label fw-semibold">Mô tả</label>
+                                <textarea asp-for="Description" class="form-control form-control-lg" rows="4" placeholder="Mô tả chi tiết về sản phẩm..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="ImagePath" class="form-label fw-semibold">Ảnh chính</label>
+                                <input asp-for="ImagePath" class="form-control form-control-lg" placeholder="URL ảnh chính" />
+                                <span asp-validation-for="ImagePath" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="ImagePath2" class="form-label fw-semibold">Ảnh phụ 2</label>
+                                <input asp-for="ImagePath2" class="form-control form-control-lg" placeholder="URL ảnh phụ 2" />
+                                <span asp-validation-for="ImagePath2" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="ImagePath3" class="form-label fw-semibold">Ảnh phụ 3</label>
+                                <input asp-for="ImagePath3" class="form-control form-control-lg" placeholder="URL ảnh phụ 3" />
+                                <span asp-validation-for="ImagePath3" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                                <i class="bi bi-arrow-left-circle"></i> Quay lại
+                            </a>
+                            <button type="submit" class="btn btn-gradient btn-lg rounded-pill px-4" style="background: linear-gradient(90deg,#ff512f,#a18cd1); color: #fff; font-weight:600; border:none;">
+                                <i class="bi bi-plus-circle"></i> Thêm sản phẩm
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <div class="mt-4 d-flex justify-content-between">
-            <a href="@Url.Action("Index")" class="btn btn-secondary">
-                <i class="bi bi-arrow-left-circle"></i> Quay lại
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Thêm sản phẩm
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const categorySelect = document.getElementById("CategoryId");
             const discountField = document.getElementById("discountField");
-
             function toggleDiscountField() {
                 const selectedText = categorySelect.options[categorySelect.selectedIndex]?.text.toLowerCase();
                 if (selectedText && selectedText.includes("sale")) {
@@ -93,9 +95,8 @@
                     discountField.style.display = "none";
                 }
             }
-
             categorySelect.addEventListener("change", toggleDiscountField);
-            toggleDiscountField(); // Gọi khi trang tải xong
+            toggleDiscountField();
         });
     </script>
 }

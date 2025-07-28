@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="Welcome" xml:space="preserve">
+    <value>Chào mừng bạn đến với FigureShop!</value>
+  </data>
+  <data name="Cart" xml:space="preserve">
+    <value>Giỏ hàng</value>
+  </data>
+  <data name="Account" xml:space="preserve">
+    <value>Tài khoản</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Đăng xuất</value>
+  </data>
+</root>

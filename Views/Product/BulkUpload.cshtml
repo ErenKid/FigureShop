@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Bulk Upload Products";
+}
+<h2 class="mb-4">Thêm sản phẩm hàng loạt bằng Excel</h2>
+<form asp-action="BulkUpload" asp-controller="Product" method="post" enctype="multipart/form-data" class="card p-4 shadow" style="max-width:500px; margin:auto; border-radius:18px;">
+    <div class="mb-3">
+        <label for="excelFile" class="form-label fw-bold">Chọn file Excel (.xlsx)</label>
+        <input type="file" name="excelFile" id="excelFile" class="form-control" accept=".xlsx" required />
+    </div>
+    <button type="submit" class="btn btn-primary rounded-pill px-4" style="background: linear-gradient(90deg,#1976d2,#ffca28); font-weight:600;">Tải lên & Thêm sản phẩm</button>
+</form>
+<div class="mt-4 text-muted" style="max-width:500px; margin:auto;">
+    <p>File Excel cần có các cột: <b>Name, Description, Price, CategoryId, ImagePath, Stock, DiscountPrice, IsPreOrder</b></p>
+</div>

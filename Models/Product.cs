@@ -1,5 +1,5 @@
 using System;
-
+using FigureShop.Models;
 namespace FigureShop.Models
 {
     public class Product
@@ -13,7 +13,14 @@ namespace FigureShop.Models
         public string ImagePath { get; set; } = null!;      // Đường dẫn ảnh sản phẩm
         public string? ImagePath2 { get; set; }             // Đường dẫn ảnh phụ 2
         public string? ImagePath3 { get; set; }             // Đường dẫn ảnh phụ 3
-        public int Stock { get; set; }        
-        public decimal? DiscountPrice { get; set; }     // Số lượng tồn kho
+        public int Stock { get; set; }
+        public decimal? DiscountPrice { get; set; }     // Giảm giá 
+        public virtual FlashSale? FlashSale { get; set; }
+        public bool IsFlashSale { get; set; }
+        public virtual ICollection<ProductReview> ProductReviews { get; set; } = new List<ProductReview>();
+        public virtual ICollection<ProductComment> ProductComments { get; set; } = new List<ProductComment>();
+
+        // Pre-order flag
+        public bool IsPreOrder { get; set; }
     }
 }

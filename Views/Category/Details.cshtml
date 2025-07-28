@@ -1,20 +1,36 @@
+
 @model FigureShop.Models.Category
 
-<h2>Chi tiết danh mục</h2>
-<div class="form-group">
-    <label>Tên danh mục:</label>
-    <div>@Model.Name</div>
+@{
+    ViewData["Title"] = "Chi tiết danh mục";
+}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-lg rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h3 class="card-title text-center mb-4 text-info fw-bold" style="margin-top:32px;">
+                        <i class="bi bi-tag me-2"></i> Chi tiết danh mục
+                    </h3>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-tag"></i> Tên danh mục:</label>
+                        <div class="ps-2">@Model.Name</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-card-text"></i> Mô tả:</label>
+                        <div class="ps-2">@Model.Description</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-calendar-plus"></i> Ngày tạo:</label>
+                        <div class="ps-2">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-calendar-check"></i> Ngày cập nhật:</label>
+                        <div class="ps-2">@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary w-100 rounded-pill">Quay lại danh sách</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="form-group">
-    <label>Mô tả:</label>
-    <div>@Model.Description</div>
-</div>
-<div class="form-group">
-    <label>Ngày tạo:</label>
-    <div>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
-</div>
-<div class="form-group">
-    <label>Ngày cập nhật:</label>
-    <div>@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</div>
-</div>
-<a href="@Url.Action("Index")" class="btn btn-secondary">Quay lại</a> 

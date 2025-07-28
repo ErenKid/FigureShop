@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <!-- Sử dụng phiên bản phù hợp: EF Core 8.0.11 và MySQL.EntityFrameworkCore 9.0.0 -->
+    <PackageReference Include="EPPlus" Version="7.1.2" />
+    <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11" />

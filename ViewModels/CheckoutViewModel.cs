@@ -9,5 +9,8 @@ namespace FigureShop.ViewModels
         public decimal TotalAmount { get; set; }
         public List<FigureShop.Models.ShoppingCartItem> CartItems { get; set; } = new();
         public string PaymentMethod { get; set; } = "COD";
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string? VoucherCode { get; set; } // Mã giảm giá từ form
     }
-} 
+}
