@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FigureShop")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute(" ")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8594e4a813f37488915640156c855df4c8965648")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+45316323e5cc466706b63e8f1e2b97079daf5bbc")]
 [assembly: System.Reflection.AssemblyProductAttribute("FigureShop")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FigureShop")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
